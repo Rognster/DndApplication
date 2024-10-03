@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [ "dom", "dom.iterable", "esnext" ],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true, // Often used in conjunction with `allowSyntheticDefaultImports`
+    "jsx": "react"
+  },
+  "include": [ "src" ]
+}
