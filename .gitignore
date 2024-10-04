@@ -1,0 +1,64 @@
+# Ignore build and debug output folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.sln.docstates
+*.vscode/
+.vs/
+
+# Build and debug files
+*.dll
+*.exe
+*.app
+*.pdb
+*.cache
+*.ilk
+*.log
+*.db-shm
+*.db-wal
+*.nuget
+
+# Ignore generated files
+*.AssemblyInfo.cs
+*.GeneratedMSBuildEditorConfig.editorconfig
+*.csproj.AssemblyReference.cache
+*.nuget.dgspec.json
+*.nuget.g.props
+project.assets.json
+*.csproj.nuget.cache
+spa.proxy.json
+*.sourcelink.json
+ApiEndpoints.json
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compiled files
+dist/
+build/
+DndApplication.Server/obj/
+DndApplication.Server/bin/
+dndapplication.client/obj/
+
+# Environment files (if using any secret configurations)
+.env
+.env.local
+.env.*.local
+
+# Yarn / npm lock files, if you want only one lock file for consistency
+# You might include only one of these if you use one package manager exclusively.
+# yarn.lock
+# package-lock.json
