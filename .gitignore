@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Ignore build and debug output folders
 bin/
 obj/
@@ -9,6 +10,22 @@ obj/
 *.sln.docstates
 *.vscode/
 .vs/
+=======
+<<<<<<< HEAD
+.vs/
+=======
+# Ignore build and debug output folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.sln.docstates
+*.vscode/
+.vs/
+>>>>>>> a23b012 (gitignore fixed)
 
 # Build and debug files
 *.dll
@@ -62,3 +79,7 @@ dndapplication.client/obj/
 # You might include only one of these if you use one package manager exclusively.
 # yarn.lock
 # package-lock.json
+<<<<<<< HEAD
+=======
+>>>>>>> 59b80a9 (gitignore fixed)
+>>>>>>> a23b012 (gitignore fixed)
