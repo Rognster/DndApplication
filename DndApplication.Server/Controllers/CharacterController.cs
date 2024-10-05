@@ -1,32 +1,43 @@
-using DndApplication.Server.Data;
-using DndApplication.Server.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using DndApplication.Server.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DndApplication.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class CharacterController : ControllerBase
+    [Route("api/[controller]")]
+    public class CharactersController : ControllerBase
     {
         private readonly DndDbContext _context;
-        private readonly ILogger<CharacterController> _logger;
-        private readonly DnD5eApiService _dndApiService;
 
-        public CharacterController(DndDbContext context, ILogger<CharacterController> logger, DnD5eApiService dndApiService)
+        public CharactersController(DndDbContext context)
         {
             _context = context;
-            _logger = logger;
-            _dndApiService = dndApiService;
         }
 
-        [HttpGet("{characterId}")]
-        public async Task<ActionResult<Character>> GetCharacter(int characterId)
+        // POST: api/Characters
+        [HttpPost]
+        public async Task<ActionResult<Character>> CreateCharacter(Character character)
         {
-            var character = await _context.Characters
-                .Include(c => c.Equipments)
-                .FirstOrDefaultAsync(c => c.Id == characterId);
+            if (character == null)
+            {
+                return BadRequest("Character data is null.");
+            }
+
+            // Add character to the context
+            _context.Characters.Add(character);
+            await _context.SaveChangesAsync();
+
+            // Return CreatedAtAction with the character entity
+            return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, character);
+        }
+
+        // GET: api/Characters/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Character>> GetCharacter(int id)
+        {
+            var character = await _context.Characters.FindAsync(id);
 
             if (character == null)
             {
@@ -36,67 +47,55 @@ namespace DndApplication.Server.Controllers
             return Ok(character);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Character>>> GetAllCharacters()
+        // PUT: api/Characters/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCharacter(int id, Character character)
         {
-            var characters = await _context.Characters
-                .Include(c => c.Equipments) // Include the equipment list
-                .Include(c => c.Stats) // Include stats
-                .ToListAsync();
-
-            return Ok(characters);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<Character>> AddCharacter(Character character)
-        {
-            // Validate input (optional, additional validation logic can be added)
-            if (character == null || string.IsNullOrEmpty(character.Name))
+            if (id != character.Id)
             {
-                return BadRequest("Invalid character data.");
+                return BadRequest("Character ID mismatch.");
             }
 
-            // Ensure equipments have the correct state set
-            if (character.Equipments != null && character.Equipments.Count > 0)
+            _context.Entry(character).State = EntityState.Modified;
+
+            try
             {
-                foreach (var equipment in character.Equipments)
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CharacterExists(id))
                 {
-                    // If equipment Id is 0, it's a new equipment that needs to be added
-                    if (equipment.Id == 0)
-                    {
-                        _context.Equipments.Add(equipment);
-                    }
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
                 }
             }
 
-            // Add the new character to the database
-            _context.Characters.Add(character);
-            await _context.SaveChangesAsync();
-
-            // Return the newly created character
-            return CreatedAtAction(nameof(GetCharacter), new { characterId = character.Id }, character);
-        }
-
-        [HttpDelete("{characterId}")]
-        public async Task<IActionResult> DeleteCharacter(int characterId)
-        {
-            // Find the character in the database
-            var character = await _context.Characters
-                .Include(c => c.Equipments) // Include equipments to delete them too
-                .FirstOrDefaultAsync(c => c.Id == characterId);
-
-            if (character == null)
-            {
-                return NotFound(); // Return 404 if character not found
-            }
-
-            // Remove the character from the database
-            _context.Characters.Remove(character);
-            await _context.SaveChangesAsync();
-
-            // Return 204 No Content to indicate successful deletion
             return NoContent();
         }
 
+        // DELETE: api/Characters/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCharacter(int id)
+        {
+            var character = await _context.Characters.FindAsync(id);
+            if (character == null)
+            {
+                return NotFound();
+            }
+
+            _context.Characters.Remove(character);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool CharacterExists(int id)
+        {
+            return _context.Characters.Any(e => e.Id == id);
+        }
     }
 }
