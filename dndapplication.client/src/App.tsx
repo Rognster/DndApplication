@@ -1,6 +1,6 @@
 //import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import Home from './components/Home';
+import Home from './pages/Home';
 import AddCharacter from './components/CharacterHandler';
 import Character from './components/Character';
 /*import './styles/main.css';
@@ -16,7 +16,6 @@ function App() {
 
     return (
         <div style={{ textAlign: 'center' }} >
-            <h1>DnD application</h1>
             <Routes>
                 <Route path="/" element={<Home navigate={navigate} />} />
                 <Route path="/add-character" element={<AddCharacter />} />

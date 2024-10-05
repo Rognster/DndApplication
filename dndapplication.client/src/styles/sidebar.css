@@ -224,3 +224,23 @@
     .sidebar ul li.dropdown-parent.expanded {
         margin-bottom: 0.8rem; /* Same as other menu items */
     }
+
+.character-info {
+    display: flex;
+    align-items: center;
+}
+
+    .character-info i {
+        margin-right: 10px;
+    }
+
+/* Delete Icon */
+.delete-icon {
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+    .delete-icon:hover {
+        color: #ff4d4d; /* Optional: Change color on hover to indicate delete action */
+    }
