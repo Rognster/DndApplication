@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using DndApplication.Server.Models;
 using DndApplication.Server.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,26 @@ namespace DndApplication.Server.Controllers
             }
 
             return Ok(character);
+        }
+
+        
+
+
+        // GET: api/Characters/{characterId}/Equipment
+        [HttpGet("{characterId}/Equipment")]
+        public async Task<ActionResult<IEnumerable<Equipment>>> GetCharacterEquipment(int characterId)
+        {
+            // Find character and include the Equipment list
+            var character = await _context.Characters
+                .Include(c => c.Equipments)
+                .FirstOrDefaultAsync(c => c.Id == characterId);
+
+            if (character == null)
+            {
+                return NotFound("Character not found.");
+            }
+
+            return Ok(character.Equipments);
         }
 
         // PUT: api/Characters/5
