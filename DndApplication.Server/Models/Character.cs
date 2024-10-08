@@ -13,7 +13,7 @@ namespace DndApplication.Server.Models
         public string? Player { get; set; }
 
         // Properties as strings and lists of strings
-        public string? AbilityScore { get; set; }
+        public List<int> AbilityScores { get; set; } = new List<int>();
 
         public string? Alignment { get; set; }
 

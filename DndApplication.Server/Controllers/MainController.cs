@@ -68,7 +68,7 @@ namespace DndApplication.Server.Controllers
             return Ok(characters);
         }
 
-        // GET: api/characters/{id}
+        /*// GET: api/characters/{id}
         [HttpGet("characters/{id}")]
         public async Task<ActionResult<Character>> GetCharacter(int id)
         {
@@ -80,6 +80,6 @@ namespace DndApplication.Server.Controllers
             }
 
             return Ok(character);
-        }
+        }*/
     }
 }

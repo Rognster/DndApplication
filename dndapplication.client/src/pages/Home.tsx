@@ -13,7 +13,8 @@ function Home() {
 
     async function populateCharacterData() {
         try {
-            const response = await fetch('/Character');
+            const response = await fetch('/Characters');
+            console.log(response);
             if (response.ok) {
                 const data = await response.json();
                 setCharacters(data);
