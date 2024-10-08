@@ -69,7 +69,6 @@ build/
 DndApplication.Server/obj/
 DndApplication.Server/bin/
 dndapplication.client/obj/
-DndApplication.Server/dndDatabase.db
 
 # Environment files (if using any secret configurations)
 .env
