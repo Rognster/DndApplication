@@ -1,209 +1,474 @@
-/* General form styling */
-.charsheet {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #f4f4f4;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* General Styles */
+.red {
+    background: red;
 }
 
-.section-box {
-    margin-bottom: 20px;
+.blue {
+    background: blue;
 }
 
-h1,
-h2,
-h3,
-label {
-    font-family: 'Georgia', serif;
-    color: #333;
-    margin-bottom: 5px;
-    text-transform: uppercase;
+.hide {
+    display: none !important;
 }
 
-h1 {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-h2 {
-    font-size: 20px;
-    margin-top: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-h3 {
-    font-size: 18px;
-}
-
-input,
 textarea {
+    font-size: 12px;
+    text-align: left;
     width: 100%;
+    border-radius: 10px;
     padding: 10px;
-    font-size: 16px;
-    margin: 5px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-    box-sizing: border-box;
+    resize: none;
+    overflow: hidden;
+    height: 15em;
 }
 
-    input[readonly],
-    textarea[readonly] {
-        background-color: #f0f0f0;
-        border: 1px solid #ddd;
-    }
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    margin-bottom: 5px;
-}
-
-.character-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border-bottom: 2px solid #333;
-    padding-bottom: 10px;
-}
-
-    .character-header h1 {
-        margin-bottom: 10px;
-    }
-
-    .character-header p {
-        font-size: 16px;
-        margin: 5px 0;
-    }
-
-/* Section styling */
-.attributes ul {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-.attributes li {
-    flex: 1;
-    text-align: center;
-}
-
-.scores ul,
-.skills ul {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-
-    .skills ul li {
-        flex: 1 0 48%;
-        margin-bottom: 10px;
-    }
-
-        .skills ul li label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-.equipment ul {
-    margin-top: 10px;
-    padding-left: 0;
-}
-
-    .equipment ul li {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        padding: 5px;
-        margin-bottom: 5px;
-        border-radius: 5px;
-    }
-
-/* Feats and Features */
-.feats ul,
-.features ul {
-    margin-top: 10px;
-    padding-left: 0;
-}
-
-    .feats ul li,
-    .features ul li {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        padding: 5px;
-        margin-bottom: 5px;
-        border-radius: 5px;
-    }
-
-/* Skills table */
-.skills-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-    .skills-table th,
-    .skills-table td {
-        padding: 10px;
-        border: 1px solid #ccc;
-        text-align: center;
-        font-size: 14px;
-    }
-
-    .skills-table th {
-        background-color: #333;
-        color: #fff;
-        text-transform: uppercase;
-    }
-
-    .skills-table td {
-        background-color: #fff;
-    }
-
-/* Senses, proficiencies & languages */
-.section-box {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #fff;
-}
-
-.box label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    text-transform: uppercase;
-}
-
-.box input,
-.box textarea {
-    width: calc(100% - 20px);
-    padding: 5px;
-}
-
-.back-button button {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
+input[type="checkbox"] {
     cursor: pointer;
 }
 
-    .back-button button:hover {
-        background-color: #555;
+div.box {
+    margin-top: 10px;
+}
+
+/* Character Sheet Container */
+.charsheet {
+    width: 1400px; /* Set your desired fixed width */
+    margin: 20px auto; /* Centers the container */
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header .charname,
+.header 
+.header .hp {
+    width: 30%;
+}
+.misc {
+    width: auto;
+    height: auto;
+}
+
+.header .charname,
+.header .hp .misc {
+    display: flex;
+    flex-direction: row;
+}
+
+.header .misc ul {
+    border: 1px solid black;
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+    padding: 0;
+    list-style: none;
+    padding: 0;
+    background-color: #eee;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .header .misc ul li {
+        width: 45%;
+        margin: 5px 2.5%;
+        display: flex;
+        align-items: center;
     }
 
-header, .misc {
-    display: flex; /* Makes the sections sit next to each other */
-    justify-content: space-between; /* Adds space between the sections */
-    gap: 20px; /* Optional: Adds some space between the sections */
+
+
+.header label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.header input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+header {
+    display: flex;
+    align-items: stretch;
+}
+
+.charname {
+    border: 1px solid black;
+    border-right: 0;
+    border-radius: 10px 0 0 10px;
+    padding: 5px 0;
+    background-color: #eee;
+    width: 30%;
+    display: flex;
+    flex-direction: column-reverse;
+    margin: auto;
+}
+
+    .charname input {
+        padding: 0.5em;
+        margin: 5px;
+        border: 0;
+    }
+
+    .charname label {
+        padding-left: 1em;
+        text-transform: uppercase;
+        font-size: 12px;
+    }
+
+/* HP Section */
+.hp .regular,
+.hp .temporary {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.hp label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.hp input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Above Section */
+.above .scores {
+    display: flex;
+    justify-content: center;
+}
+
+.ability-scores {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ability-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 140px; /* Fixed width for each ability */
+    margin: 0 10px;
+}
+
+.score,
+.modifier,
+.label-container{
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.score label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.score input,
+.modifier input {
+    width: 100%;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modifier input {
+    background-color: #f9f9f9;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Attributes Section */
+.attributes-section .attr-applications {
+    display: flex;
+    justify-content: space-between;
+}
+
+.attr-applications .box {
+    width: 48%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.attr-applications .label-container label {
+    text-transform: uppercase;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.attr-applications input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Saves Section */
+
+.saves.list-section {
+    width: 300px;
+}
+
+    .saves.list-section ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+.saves.list-section ul li {
+    width: 45%;
+    margin: 5px 2.5%;
+    display: flex;
+    align-items: center;
+}
+
+.saves.list-section label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-right: 5px;
+    flex: 1;
+}
+
+.saves.list-section input[type="text"] {
+    width: 50px;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.saves.list-section input[type="checkbox"] {
+    width: auto;
+}
+
+/* Passive Perception */
+.passive-perception.box {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    width: 300px;
+}
+
+.passive-perception .label-container label {
+    text-transform: uppercase;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.passive-perception input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Other Proficiencies */
+.otherprofs.box.textblock {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.otherprofs.box.textblock label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.otherprofs.box.textblock textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Skills Section */
+.skills.list-section.box {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    
+}
+
+.skills.list-section ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .skills.list-section ul li {
+        width: 45%;
+        margin: 5px 2.5%;
+        display: flex;
+        align-items: center;
+    }
+
+.skills.list-section label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-right: 5px;
+    flex: 1;
+}
+
+.skills.list-section input[type="text"] {
+    width: 50px;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.skills.list-section input[type="checkbox"] {
+    width: auto;
+}
+
+.skills.list-section .label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+/* Combat Section */
+.combat {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.combat > div {
+    width: 30%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.combat label {
+    text-transform: uppercase;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.combat input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Death Saves */
+.deathsaves .marks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.deathsaves .marks .deathsuccesses,
+.deathsaves .marks .deathfails {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.deathsaves label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+/* Flavor Section */
+.flavor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.flavor > div,
+.flavor .features {
+    width: 48%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.flavor label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.flavor textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Features Section */
+.features {
+    width: 100%;
+}
+
+.features label {
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.features textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sub-main {
+    width: 500px;
 }
 
 
-.modifies, score {
-}
+
