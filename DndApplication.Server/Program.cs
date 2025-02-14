@@ -8,7 +8,8 @@ builder.Services.AddControllers();
 
 // Register DbContext
 builder.Services.AddDbContext<DndDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // Add Swagger for API documentation (optional but recommended)
 builder.Services.AddEndpointsApiExplorer();
@@ -29,6 +30,7 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -13,7 +13,7 @@ function Home() {
 
     async function populateCharacterData() {
         try {
-            const response = await fetch('/Characters');
+            const response = await fetch('/Character');
             console.log(response);
             if (response.ok) {
                 const data = await response.json();
@@ -28,8 +28,10 @@ function Home() {
 
     return (
         <Layout characters={characters} setCharacters={setCharacters}>
-            <h1>DnD Application</h1>
-            <p>This is going to be an application for playing DnD online.</p>
+            <div class="content-wrapper">
+                <h1>DnD Application</h1>
+                <p>This is going to be an application for playing DnD online.</p>
+            </div>
         </Layout>
     );
 }

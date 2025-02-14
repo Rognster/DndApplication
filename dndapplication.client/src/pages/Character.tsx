@@ -37,7 +37,7 @@ function CharacterPage() {
     useEffect(() => {
         async function fetchCharacter() {
             try {
-                const response = await fetch(`/Characters/${id}`);
+                const response = await fetch(`/Character/${id}`);
                 console.log(response);
                 if (response.ok) {
                     const data = await response.json();
