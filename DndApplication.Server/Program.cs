@@ -8,7 +8,11 @@ builder.Services.AddControllers();
 
 // Register DbContext
 builder.Services.AddDbContext<DndDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+           .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+});
+
 
 // Add Swagger for API documentation (optional but recommended)
 builder.Services.AddEndpointsApiExplorer();
@@ -27,21 +31,21 @@ builder.Services.AddCors(options =>
         });
 });
 
+//builder.WebHost.UseUrls("http://localhost:5002");
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 

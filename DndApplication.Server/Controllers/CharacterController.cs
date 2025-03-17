@@ -1,122 +1,74 @@
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using DndApplication.Server.Models;
-using DndApplication.Server.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace DndApplication.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CharactersController : ControllerBase
+    public class CharacterController : ControllerBase
     {
-        private readonly DndDbContext _context;
-
-        public CharactersController(DndDbContext context)
+        // Temporary in-memory list of characters
+        private static readonly List<CharacterDto> Characters = new List<CharacterDto>
         {
-            _context = context;
+            new CharacterDto { Id = 1, Name = "Aragorn" },
+            new CharacterDto { Id = 2, Name = "Legolas" },
+            new CharacterDto { Id = 3, Name = "Gimli" }
+        };
+
+        // GET: api/Character
+        [HttpGet]
+        public IActionResult GetAllCharacters()
+        {
+            return Ok(Characters);
         }
 
-        // POST: api/Characters
-        [HttpPost]
-        public async Task<ActionResult<Character>> CreateCharacter(Character character)
-        {
-            if (character == null)
-            {
-                return BadRequest("Character data is null.");
-            }
-
-            // Add character to the context
-            _context.Characters.Add(character);
-            await _context.SaveChangesAsync();
-
-            // Return CreatedAtAction with the character entity
-            return CreatedAtAction(nameof(GetCharacter), new { id = character.Id }, character);
-        }
-
-        // GET: api/Characters/5
+        // GET: api/Character/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Character>> GetCharacter(int id)
+        public IActionResult GetCharacterById(int id)
         {
-            var character = await _context.Characters.FindAsync(id);
-
+            var character = Characters.Find(c => c.Id == id);
             if (character == null)
             {
-                return NotFound();
+                return NotFound($"Character with Id {id} not found.");
             }
 
             return Ok(character);
         }
 
-        
-
-
-        // GET: api/Characters/{characterId}/Equipment
-        [HttpGet("{characterId}/Equipment")]
-        public async Task<ActionResult<IEnumerable<Equipment>>> GetCharacterEquipment(int characterId)
-        {
-            // Find character and include the Equipment list
-            var character = await _context.Characters
-                .Include(c => c.Equipments)
-                .FirstOrDefaultAsync(c => c.Id == characterId);
-
-            if (character == null)
-            {
-                return NotFound("Character not found.");
-            }
-
-            return Ok(character.Equipments);
-        }
-
-        // PUT: api/Characters/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCharacter(int id, Character character)
-        {
-            if (id != character.Id)
-            {
-                return BadRequest("Character ID mismatch.");
-            }
-
-            _context.Entry(character).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CharacterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/Characters/5
+        // DELETE: api/Character/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCharacter(int id)
+        public IActionResult DeleteCharacter(int id)
         {
-            var character = await _context.Characters.FindAsync(id);
+            var character = Characters.Find(c => c.Id == id);
             if (character == null)
             {
-                return NotFound();
+                return NotFound($"Character with Id {id} not found.");
             }
 
-            _context.Characters.Remove(character);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            Characters.Remove(character);
+            return NoContent(); // 204 No Content
         }
 
-        private bool CharacterExists(int id)
+        // POST: api/Character
+        [HttpPost]
+        public IActionResult AddCharacter([FromBody] CharacterDto newCharacter)
         {
-            return _context.Characters.Any(e => e.Id == id);
+            if (newCharacter == null || string.IsNullOrEmpty(newCharacter.Name))
+            {
+                return BadRequest("Invalid character data.");
+            }
+
+            newCharacter.Id = Characters.Count > 0 ? Characters[^1].Id + 1 : 1; // Assign a new ID
+            Characters.Add(newCharacter);
+
+            return CreatedAtAction(nameof(GetCharacterById), new { id = newCharacter.Id }, newCharacter);
         }
+    }
+
+    // Temporary DTO class for characters
+    public class CharacterDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

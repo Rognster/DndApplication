@@ -55,18 +55,18 @@ namespace DndApplication.Server.Controllers
         }
 
         // GET: api/characters
-        [HttpGet("characters")]
-        public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
-        {
-            var characters = await _context.Characters.ToListAsync();
+        //[HttpGet("characters")]
+        //public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
+        //{
+        //    var characters = await _context.Characters.ToListAsync();
 
-            if (characters == null || characters.Count == 0)
-            {
-                return NotFound();
-            }
+        //    if (characters == null || characters.Count == 0)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(characters);
-        }
+        //    return Ok(characters);
+        //}
 
         /*// GET: api/characters/{id}
         [HttpGet("characters/{id}")]

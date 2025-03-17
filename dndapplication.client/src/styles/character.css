@@ -1,4 +1,10 @@
 /* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .red {
     background: red;
 }
@@ -32,8 +38,8 @@ div.box {
 
 /* Character Sheet Container */
 .charsheet {
-    width: 1400px; /* Set your desired fixed width */
-    margin: 20px auto; /* Centers the container */
+    width: 1400px;
+    margin: 20px auto;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -48,34 +54,28 @@ div.box {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    gap: 20px;
 }
 
-.header .charname,
-.header 
-.header .hp {
-    width: 30%;
-}
+    .header .charname,
+    .header .hp {
+        width: 30%;
+    }
+
 .misc {
     width: auto;
     height: auto;
-}
-
-.header .charname,
-.header .hp .misc {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .header .misc ul {
     border: 1px solid black;
-    border-right: 0;
-    border-radius: 10px 0 0 10px;
-    padding: 0;
+    border-radius: 10px;
+    padding: 10px;
     list-style: none;
-    padding: 0;
     background-color: #eee;
     width: 100%;
-    height: 100%;
     display: flex;
     flex-wrap: wrap;
 }
@@ -87,79 +87,59 @@ div.box {
         align-items: center;
     }
 
-
-
 .header label {
     text-transform: uppercase;
     font-size: 12px;
     margin-bottom: 5px;
+    display: block;
 }
 
 .header input {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-header {
-    display: flex;
-    align-items: stretch;
+    width: 100%;
 }
 
-.charname {
-    border: 1px solid black;
-    border-right: 0;
-    border-radius: 10px 0 0 10px;
-    padding: 5px 0;
-    background-color: #eee;
-    width: 30%;
-    display: flex;
-    flex-direction: column-reverse;
-    margin: auto;
+/* Form Wrapper */
+.form-wrapper {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    align-items: center;
 }
 
-    .charname input {
-        padding: 0.5em;
-        margin: 5px;
-        border: 0;
-    }
-
-    .charname label {
-        padding-left: 1em;
-        text-transform: uppercase;
-        font-size: 12px;
-    }
-
-/* HP Section */
-.hp .regular,
-.hp .temporary {
+.form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
 }
 
-.hp label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
+    .form-group label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
 
-.hp input {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
+    .form-group input,
+    .form-group select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 
-/* Above Section */
-.above .scores {
-    display: flex;
-    justify-content: center;
-}
-
+/* Ability Scores */
 .ability-scores {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    width: 100%;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -169,15 +149,8 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 140px; /* Fixed width for each ability */
+    width: 140px;
     margin: 0 10px;
-}
-
-.score,
-.modifier,
-.label-container{
-    width: 100%;
-    margin-bottom: 5px;
 }
 
 .score label {
@@ -196,171 +169,45 @@ header {
     border-radius: 5px;
 }
 
-.modifier input {
-    background-color: #f9f9f9;
-}
-
-/* Main Content */
-.main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Attributes Section */
-.attributes-section .attr-applications {
-    display: flex;
-    justify-content: space-between;
-}
-
-.attr-applications .box {
-    width: 48%;
+/* Skills Section */
+.skills.list-section {
     border: 1px solid black;
     border-radius: 10px;
     padding: 10px;
 }
 
-.attr-applications .label-container label {
-    text-transform: uppercase;
-    font-size: 12px;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.attr-applications input {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Saves Section */
-
-.saves.list-section {
-    width: 300px;
-}
-
-    .saves.list-section ul {
+    .skills.list-section ul {
         list-style: none;
         padding: 0;
         display: flex;
         flex-wrap: wrap;
     }
 
-.saves.list-section ul li {
-    width: 45%;
-    margin: 5px 2.5%;
-    display: flex;
-    align-items: center;
-}
+        .skills.list-section ul li {
+            width: 45%;
+            margin: 5px 2.5%;
+            display: flex;
+            align-items: center;
+        }
 
-.saves.list-section label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-right: 5px;
-    flex: 1;
-}
-
-.saves.list-section input[type="text"] {
-    width: 50px;
-    padding: 5px;
-    margin-right: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.saves.list-section input[type="checkbox"] {
-    width: auto;
-}
-
-/* Passive Perception */
-.passive-perception.box {
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px;
-    width: 300px;
-}
-
-.passive-perception .label-container label {
-    text-transform: uppercase;
-    font-size: 12px;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.passive-perception input {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Other Proficiencies */
-.otherprofs.box.textblock {
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px;
-}
-
-.otherprofs.box.textblock label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-.otherprofs.box.textblock textarea {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Skills Section */
-.skills.list-section.box {
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px;
-    
-}
-
-.skills.list-section ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-}
-
-    .skills.list-section ul li {
-        width: 45%;
-        margin: 5px 2.5%;
-        display: flex;
-        align-items: center;
+    .skills.list-section label {
+        text-transform: uppercase;
+        font-size: 12px;
+        margin-right: 5px;
+        flex: 1;
     }
 
-.skills.list-section label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-right: 5px;
-    flex: 1;
-}
+    .skills.list-section input[type="text"] {
+        width: 50px;
+        padding: 5px;
+        margin-right: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
 
-.skills.list-section input[type="text"] {
-    width: 50px;
-    padding: 5px;
-    margin-right: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.skills.list-section input[type="checkbox"] {
-    width: auto;
-}
-
-.skills.list-section .label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-top: 10px;
-}
+    .skills.list-section input[type="checkbox"] {
+        width: auto;
+    }
 
 /* Combat Section */
 .combat {
@@ -369,106 +216,159 @@ header {
     gap: 20px;
 }
 
-.combat > div {
-    width: 30%;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px;
+    .combat > div {
+        width: 30%;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .combat label {
+        text-transform: uppercase;
+        font-size: 12px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .combat input[type="text"] {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .charsheet {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+    }
+
+    .form-wrapper {
+        grid-template-columns: 1fr;
+    }
 }
 
-.combat label {
-    text-transform: uppercase;
-    font-size: 12px;
-    display: block;
-    margin-bottom: 5px;
-}
 
-.combat input[type="text"] {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Death Saves */
-.deathsaves .marks {
+.saves.list-section.box {
     display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.deathsaves .marks .deathsuccesses,
-.deathsaves .marks .deathfails {
-    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1px;
+    background-color: #fff;
+    width: 30%;
 }
 
-.deathsaves label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-/* Flavor Section */
-.flavor {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.flavor > div,
-.flavor .features {
-    width: 48%;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px;
-}
-
-.flavor label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-bottom: 5px;
-    display: block;
-}
-
-.flavor textarea {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* Features Section */
-.features {
-    width: 100%;
-}
-
-.features label {
-    text-transform: uppercase;
-    font-size: 12px;
-    margin-bottom: 5px;
-}
-
-.features textarea {
-    width: 100%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.main-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
+/* Unordered list inside saving throws */
+.saves.list-section ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 60px));
+    gap: 1px;
+    width: 100%;
 }
-.sub-main {
-    width: 500px;
+
+    /* Individual saving throw items */
+    .saves.list-section ul li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        text-align: center;
+    }
+
+        /* Saving throw label styling */
+        .saves.list-section ul li label {
+            font-size: 10px;
+            font-weight: lighter;
+            text-transform: uppercase;
+            color: #333;
+        }
+
+        /* Input fields for saving throws */
+        .saves.list-section ul li input[type="text"] {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Checkbox for proficiency */
+        .saves.list-section ul li input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+/* Label below saving throws */
+.saves.list-section .label {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #444;
+    text-align: center;
 }
 
+.modifier-buttons {
+    display: flex;
+    gap: 0.5rem; /* Space between the buttons */
+}
+
+.modifier-btn {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    background-color: #f8f9fa; /* Light gray background */
+    color: #333;
+    font-size: 1.25rem; /* Slightly larger font for better visibility */
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+    .modifier-btn:hover {
+        background-color: #e2e6ea; /* Slightly darker background on hover */
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    }
+
+    .modifier-btn:active {
+        background-color: #d6d8db; /* Even darker background on click */
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.2); /* Inset shadow for click effect */
+    }
 
 
+
+
+/* Glow effect for choosable checkboxes */
+input[type="checkbox"].glow-checkbox {
+    box-shadow: 0 0 10px 3px rgba(255, 215, 0, 0.8); /* Golden glow */
+    border-color: gold; /* Change border color to gold */
+}
+
+    /* Checkbox on hover (optional) */
+    input[type="checkbox"].glow-checkbox:hover {
+        box-shadow: 0 0 15px 5px rgba(255, 223, 0, 1); /* Intensify glow on hover */
+    }
+
+/* Checked state */
+input[type="checkbox"]:checked {
+    background-color: white; /* Maintain white background */
+    border-color: green; /* Optional: change border color when checked */
+    box-shadow: none; /* Remove glow when checked, if desired */
+}

@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ characters, setCharacters }) => {
     // Function to delete a character
     const handleDeleteCharacter = async (characterId: number) => {
         try {
-            const response = await fetch(`https://localhost:5001/api/Characters/${characterId}`, {
+            const response = await fetch(`https://localhost:5001/api/Character/${characterId}`, {
                 method: 'DELETE',
             });
 

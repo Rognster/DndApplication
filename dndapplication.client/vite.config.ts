@@ -44,12 +44,12 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/Characters': {
+            '^/Character': {
                 target,
                 secure: false
             }
         },
-        port: 5173,
+        port: 5001,
         https: {
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),
