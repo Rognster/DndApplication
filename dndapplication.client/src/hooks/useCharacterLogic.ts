@@ -5,8 +5,7 @@ import { RaceData } from '../interfaces/RaceData';
 import { RaceAbilityBonus } from '../interfaces/RaceAbilityBonus';
 import { ClassSavingThrows } from '../interfaces/ClassSavingThrows';
 import { ClassSkills } from '../interfaces/ClassSkills';
-
-type AttributeKey = 'str' | 'dex' | 'con' | 'wis' | 'int' | 'cha';
+import { AttributeKey } from '../types/CharacterType';  // Added import
 
 export function useCharacterLogic() {
     const [classes, setClasses] = useState<ClassData[]>([]);

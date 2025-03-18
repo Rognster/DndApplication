@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "",
+"RedirectUrl": "",
+"LaunchCommand": "",
+"WorkingDirectory": "C:\\Users\\ANDROG\\source\\DndApplication\\DndApplication.Server",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

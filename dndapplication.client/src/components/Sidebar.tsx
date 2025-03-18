@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CharacterType } from '../types/CharacterType';
 import '../styles/sidebar.css';
 
 export interface Character {
@@ -8,8 +9,8 @@ export interface Character {
 }
 
 interface SidebarProps {
-    characters: Character[];
-    setCharacters: React.Dispatch<React.SetStateAction<Character[]>>;
+    characters: CharacterType[];
+    setCharacters: React.Dispatch<React.SetStateAction<CharacterType[]>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ characters, setCharacters }) => {

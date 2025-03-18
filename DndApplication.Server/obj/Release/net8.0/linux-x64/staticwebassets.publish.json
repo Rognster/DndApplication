@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "PLJms0MZf9irEAQwNd0uG3GkvEuP72CoL2RLlqyhAvI=",
+  "Source": "DndApplication.Server",
+  "BasePath": "_content/DndApplication.Server",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

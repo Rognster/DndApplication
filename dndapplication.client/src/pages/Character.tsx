@@ -1,18 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { Character } from '../types';
-import '../styles/character.css';
+import { CharacterType, AttributeKey } from '../types/CharacterType';
 
 function CharacterPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const [character, setCharacter] = useState<Character | null>(null);
-    const [characters, setCharacters] = useState<Character[]>([]);
+    const [character, setCharacter] = useState<CharacterType | null>(null);
+    const [characters, setCharacters] = useState<CharacterType[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     // Helper function to calculate ability modifiers
     const calculateModifier = (score: number) => Math.floor((score - 10) / 2);
+
+    const handleAbilityScoreChange = (attr: AttributeKey, value: number) => {
+        if (!character) return;
+        setCharacter({
+            ...character,
+            abilityScores: {
+                ...character.abilityScores,
+                [attr]: value
+            }
+        });
+    };
 
     // Fetching list of characters
     useEffect(() => {
@@ -67,7 +77,7 @@ function CharacterPage() {
                     <button onClick={handleBack}>Back</button>
                 </div>
             </Layout>
-        );
+            );
     }
 
     if (!character) {
@@ -179,23 +189,21 @@ function CharacterPage() {
                 <section className="above">
                     <div className="scores">
                         <ul className="ability-scores">
-                            {["Strength", "Dexterity", "Constitution", "Wisdom", "Intelligence", "Charisma"].map((attr, index) => (
-                                <li key={index} className="ability-item">
+                            {Object.entries(character.abilityScores).map(([key, value]) => (
+                                <li key={key} className="ability-item">
                                     <div className="score">
-                                        <label htmlFor={`${attr}score`}>{attr}</label>
+                                        <label htmlFor={`${key}score`}>{key.toUpperCase()}</label>
                                         <input
-                                            id={`${attr}score`}
-                                            name={`${attr}score`}
-                                            placeholder="10"
-                                            value={character.abilityScores[index]}
-                                            onChange={(e) => handleAbilityScoreChange(index, Number(e.target.value))}
+                                            id={`${key}score`}
+                                            name={`${key}score`}
+                                            value={value}
+                                            onChange={(e) => handleAbilityScoreChange(key as AttributeKey, Number(e.target.value))}
                                         />
                                     </div>
                                     <div className="modifier">
                                         <input
-                                            name={`${attr}mod`}
-                                            placeholder="+0"
-                                            value={calculateModifier(character.abilityScores[index])}
+                                            name={`${key}mod`}
+                                            value={calculateModifier(value)}
                                             readOnly
                                         />
                                     </div>
@@ -280,20 +288,21 @@ function CharacterPage() {
                
                                     <div className="saves list-section box">
                                         <ul>
-                                            {["Str", "Dex", "Con", "Wis", "Int", "Cha"].map((attr, index) => (
-                                                <li key={index}>
-                                                    <label htmlFor={`${attr}-save`}>{attr}</label>
+                                            {Object.entries(character.savingThrows).map(([key, save]) => (
+                                                <li key={key}>
+                                                    <label htmlFor={`${key}-save`}>{key.toUpperCase()}</label>
                                                     <input
-                                                        id={`${attr}-save`}
-                                                        name={`${attr}-save`}
+                                                        id={`${key}-save`}
+                                                        name={`${key}-save`}
                                                         type="text"
-                                                        placeholder="+0"
-                                                        defaultValue={character[`${attr.toLowerCase()}Save`]}
+                                                        value={save.value}
+                                                        readOnly
                                                     />
                                                     <input
-                                                        name={`${attr}-save-prof`}
+                                                        name={`${key}-save-prof`}
                                                         type="checkbox"
-                                                        defaultChecked={character[`${attr.toLowerCase()}SaveProf`]}
+                                                        checked={save.isProficient}
+                                                        readOnly
                                                     />
                                                 </li>
                                             ))}
@@ -327,41 +336,23 @@ function CharacterPage() {
                         <section className="sub-main">
                             <section className="skills list-section box">
                                 <ul>
-                                    {[
-                                        { name: "Acrobatics", attr: "Dex" },
-                                        { name: "Animal Handling", attr: "Wis" },
-                                        { name: "Arcana", attr: "Int" },
-                                        { name: "Athletics", attr: "Str" },
-                                        { name: "Deception", attr: "Cha" },
-                                        { name: "History", attr: "Int" },
-                                        { name: "Insight", attr: "Wis" },
-                                        { name: "Intimidation", attr: "Cha" },
-                                        { name: "Investigation", attr: "Int" },
-                                        { name: "Medicine", attr: "Wis" },
-                                        { name: "Nature", attr: "Int" },
-                                        { name: "Perception", attr: "Wis" },
-                                        { name: "Performance", attr: "Cha" },
-                                        { name: "Persuasion", attr: "Cha" },
-                                        { name: "Religion", attr: "Int" },
-                                        { name: "Sleight of Hand", attr: "Dex" },
-                                        { name: "Stealth", attr: "Dex" },
-                                        { name: "Survival", attr: "Wis" },
-                                    ].map((skill, index) => (
-                                        <li key={index}>
-                                            <label htmlFor={skill.name}>
-                                                {skill.name} <span className="skill">({skill.attr})</span>
+                                    {Object.entries(character.skills).map(([skillName, skill]) => (
+                                        <li key={skillName}>
+                                            <label htmlFor={skillName}>
+                                                {skillName} <span className="skill">({skill.attribute})</span>
                                             </label>
                                             <input
-                                                id={skill.name}
-                                                name={skill.name}
+                                                id={skillName}
+                                                name={skillName}
                                                 type="text"
-                                                placeholder="+0"
-                                                defaultValue={character[skill.name]}
+                                                value={skill.value}
+                                                readOnly
                                             />
                                             <input
-                                                name={`${skill.name}-prof`}
+                                                name={`${skillName}-prof`}
                                                 type="checkbox"
-                                                defaultChecked={character[`${skill.name}-prof`]}
+                                                checked={skill.isProficient}
+                                                readOnly
                                             />
                                         </li>
                                     ))}
@@ -425,13 +416,13 @@ function CharacterPage() {
                                     <div className="marks">
                                         <div className="deathsuccesses">
                                             <label>Successes</label>
-                                            <div className="bubbles">
-                                                {[1, 2, 3].map((i) => (
+                                            <div className="bubbles"></div>
+                                                {character.deathSaves.successes.map((success, i) => (
                                                     <input
                                                         key={i}
                                                         type="checkbox"
-                                                        name={`deathsuccess${i}`}
-                                                        defaultChecked={character[`deathsuccess${i}`]}
+                                                        checked={success}
+                                                        readOnly
                                                     />
                                                 ))}
                                             </div>
@@ -439,18 +430,17 @@ function CharacterPage() {
                                         <div className="deathfails">
                                             <label>Failures</label>
                                             <div className="bubbles">
-                                                {[1, 2, 3].map((i) => (
+                                                {character.deathSaves.failures.map((failure, i) => (
                                                     <input
                                                         key={i}
                                                         type="checkbox"
-                                                        name={`deathfail${i}`}
-                                                        defaultChecked={character[`deathfail${i}`]}
+                                                        checked={failure}
+                                                        readOnly
                                                     />
                                                 ))}
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </section>
                     </section>
                 </main>
@@ -507,6 +497,6 @@ function CharacterPage() {
             </form>
         </Layout>
     );
-}
+};
 
 export default CharacterPage;

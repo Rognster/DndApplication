@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import Layout from '../components/Layout';
 import { useCharacterLogic } from '../hooks/useCharacterLogic';
-import { AttributeKey } from '../types/AttributeKey';
+import { AttributeKey } from '../types/CharacterType';
+import '../styles/character.css';
 
 function AddCharacter() {
     const {
@@ -235,22 +236,16 @@ function AddCharacter() {
                     </section>
                     <main className="main-content">
                         <section className="sub-main">
-
                             <section className="attributes-section">
-
                                 <div className="attr-applications">
-                                 
                                     <div className="saves list-section box">
                                         <div className="label">Saving Throws</div>
                                         <ul>
                                             {["Strength", "Dexterity", "Constitution", "Wisdom", "Intelligence", "Charisma"].map((attr, index) => {
                                                 const abilityKey = attr.toLowerCase().slice(0, 3) as AttributeKey;
-
-                                                // Check if the attribute is part of the saving throw proficiencies for the selected class
                                                 const isProficient = classSavingThrows.some((savingThrow) => 
                                                     abilityScoreMapping[savingThrow.abilityScoreName.toLowerCase() as AttributeKey] === attr
                                                 );
-
                                                 const modifier = abilityScores[abilityKey]?.modifier + (isProficient ? PoficiencyBonus : 0) || 0;
 
                                                 return (
@@ -260,179 +255,137 @@ function AddCharacter() {
                                                             id={`${attr}-save`}
                                                             name={`${attr}-save`}
                                                             type="text"
-                                                            value={modifier >= 0 ? `+${modifier}` : modifier} // Display the modifier
-                                                            readOnly // Prevent manual editing
+                                                            value={modifier >= 0 ? `+${modifier}` : modifier}
+                                                            readOnly
                                                         />
                                                         <input
                                                             id={`${attr}-save-prof`}
                                                             name={`${attr}-save-prof`}
                                                             type="checkbox"
-                                                            checked={isProficient} // Dynamically set the checkbox state
-                                                            readOnly // Prevent manual changes to the proficiency checkbox
+                                                            checked={isProficient}
+                                                            readOnly
                                                         />
                                                     </li>
                                                 );
                                             })}
                                         </ul>
                                     </div>
+                                    <div className="saves list-section box">
+                                        <div className="label-container">
+                                            <label htmlFor="passiveperception">Passive Wisdom (Perception)</label>
+                                        </div>
+                                        <input
+                                            id="passiveperception"
+                                            name="passiveperception"
+                                            value={abilityScores.wis.modifier}
+                                            readOnly
+                                        />
+                                    </div>
+                                    <div className="saves list-section box">
+                                        <div className="modifier">
+                                            <label htmlFor="ac">Armor Class</label>
+                                            <input
+                                                type="text"
+                                                id="ac"
+                                                name="ac"
+                                                value={abilityScores.dex.modifier}
+                                                readOnly
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="saves list-section box">
+                                        <div className="modifier">
+                                            <label htmlFor="initiative">Initiative</label>
+                                            <input
+                                                type="text"
+                                                id="initiative"
+                                                name="initiative"
+                                                value={abilityScores.dex.modifier}
+                                                readOnly
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                            </section>
+                                <div className="skills list-section box">
+                                    <div className="label">
+                                        Skill, You can choose {selectedProficiencyCount} of the highlighted skills as proficient choosing the {selectedClassName} class.
+                                    </div>
+                                    <ul>
+                                        {[
+                                            { name: "Acrobatics", attr: "Dex" },
+                                            { name: "Animal Handling", attr: "Wis" },
+                                            { name: "Arcana", attr: "Int" },
+                                            { name: "Athletics", attr: "Str" },
+                                            { name: "Deception", attr: "Cha" },
+                                            { name: "History", attr: "Int" },
+                                            { name: "Insight", attr: "Wis" },
+                                            { name: "Intimidation", attr: "Cha" },
+                                            { name: "Investigation", attr: "Int" },
+                                            { name: "Medicine", attr: "Wis" },
+                                            { name: "Nature", attr: "Int" },
+                                            { name: "Perception", attr: "Wis" },
+                                            { name: "Performance", attr: "Cha" },
+                                            { name: "Persuasion", attr: "Cha" },
+                                            { name: "Religion", attr: "Int" },
+                                            { name: "Sleight of Hand", attr: "Dex" },
+                                            { name: "Stealth", attr: "Dex" },
+                                            { name: "Survival", attr: "Wis" }
+                                        ].map((skill, index) => {
+                                            const abilityKey = skill.attr.toLowerCase().slice(0, 3) as AttributeKey;
+                                            const modifier = abilityScores[abilityKey]?.modifier;
+                                            let proficientInSkill = false;
 
-                            <div className="saves list-section box">
-                                <div className="label-container">
-                                    <label htmlFor="passiveperception">Passive Wisdom (Perception)</label>
-                                </div>
-                                <input
-                                    id="passiveperception"
-                                    name="passiveperception"
-                                    value = {abilityScores.wis.modifier}
-                                    readOnly
-                                />
-                            </div>
-                            <div className="saves list-section box">
-                             <div className="modifier">
-                                    <label htmlFor="ac">Armor Class</label>
-                                    <input
-                                        type="text"
-                                        id="ac"
-                                        name="ac"
-                                        value={abilityScores.dex.modifier}
-                                        readOnly
-                                    />
-                                </div>
-                                </div>
-                            <div className="saves list-section box">
-                                <div className="modifier">
-                                    <label htmlFor="initiative">Initiative</label>
-                                    <input
-                                        type="text"
-                                        id="initiative"
-                                        name="initiative"
-                                        value={abilityScores.dex.modifier}
-                                        readOnly
-                                    />
-                                </div>
-                             </div>
-                        </section>
-                        <section className="sub-main">
-                        <div className="label">
-                            Skill, You can choose {selectedProficiencyCount} of the highlighted skills as proficient choosing the {selectedClassName} class.
-                        </div>
-                            <section className="skills list-section box">
-                                <ul>
-{                                    [{
-                                        name: "Acrobatics",
-                                        attr: "Dex"
-                                    }, {
-                                        name: "Animal Handling",
-                                        attr: "Wis"
-                                    }, {
-                                        name: "Arcana",
-                                        attr: "Int"
-                                    }, {
-                                        name: "Athletics",
-                                        attr: "Str"
-                                    }, {
-                                        name: "Deception",
-                                        attr: "Cha"
-                                    }, {
-                                        name: "History",
-                                        attr: "Int"
-                                    }, {
-                                        name: "Insight",
-                                        attr: "Wis"
-                                    }, {
-                                        name: "Intimidation",
-                                        attr: "Cha"
-                                    }, {
-                                        name: "Investigation",
-                                        attr: "Int"
-                                    }, {
-                                        name: "Medicine",
-                                        attr: "Wis"
-                                    }, {
-                                        name: "Nature",
-                                        attr: "Int"
-                                    }, {
-                                        name: "Perception",
-                                        attr: "Wis"
-                                    }, {
-                                        name: "Performance",
-                                        attr: "Cha"
-                                    }, {
-                                        name: "Persuasion",
-                                        attr: "Cha"
-                                    }, {
-                                        name: "Religion",
-                                        attr: "Int"
-                                    }, {
-                                        name: "Sleight of Hand",
-                                        attr: "Dex"
-                                    }, {
-                                        name: "Stealth",
-                                        attr: "Dex"
-                                    }, {
-                                        name: "Survival",
-                                        attr: "Wis"
-                                    }].map((skill, index) => {
-                                        const abilityKey = skill.attr.toLowerCase().slice(0, 3) as AttributeKey;
-                                        const modifier = abilityScores[abilityKey]?.modifier;
-                                        let proficientInSkill = false;
+                                            classSkills.forEach((classSkill) => {
+                                                if (classSkill.skillIndex === skill.name.toLowerCase()) {
+                                                    proficientInSkill = true;
+                                                }
+                                            });
 
-                                        classSkills.forEach((classSkill) => {
-                                            if (classSkill.skillIndex === skill.name.toLowerCase()) {
-                                                 proficientInSkill = true;
-                                            }
-                                        });
-
-                                        console.log(classSkills);
-
-                                        return(
-                                            <li key={index}>
-                                                <label htmlFor={skill.name}>
-                                                    {skill.name} <span className="skill">({skill.attr})</span>
-                                                </label>
-                                                <input
-                                                    id={skill.name}
-                                                    name={skill.name}
-                                                    type="text"
-                                                    value={modifier + (proficientSkills.includes(skill.name.toLowerCase()) ? PoficiencyBonus : 0)}
-                                                    readOnly
-                                                />
-                                                <input
-                                                    name={`${skill.name}-prof`}
-                                                    type="checkbox"
-                                                    className={
-                                                        proficientInSkill &&
-                                                        (selectedProficiencyCount > 0 || proficientSkills.includes(skill.name.toLowerCase()))
-                                                            ? "glow-checkbox"
-                                                            : ""
-                                                    }
-                                                    checked={proficientSkills.includes(skill.name.toLowerCase())}
-                                                    onChange={(e) => {
-                                                        const isChecked = e.target.checked;
-
-                                                        if (isChecked && selectedProficiencyCount > 0) {
-                                                            toggleProficiency(skill.name.toLowerCase());
-                                                            setSelectedProficiencyCount((count) => count - 1);
-                                                        } else if (!isChecked) {
-                                                            toggleProficiency(skill.name.toLowerCase());
-                                                            setSelectedProficiencyCount((count) => count + 1);
+                                            return (
+                                                <li key={index}>
+                                                    <label htmlFor={skill.name}>
+                                                        {skill.name} <span className="skill">({skill.attr})</span>
+                                                    </label>
+                                                    <input
+                                                        id={skill.name}
+                                                        name={skill.name}
+                                                        type="text"
+                                                        value={modifier + (proficientSkills.includes(skill.name.toLowerCase()) ? PoficiencyBonus : 0)}
+                                                        readOnly
+                                                    />
+                                                    <input
+                                                        name={`${skill.name}-prof`}
+                                                        type="checkbox"
+                                                        className={
+                                                            proficientInSkill &&
+                                                            (selectedProficiencyCount > 0 || proficientSkills.includes(skill.name.toLowerCase()))
+                                                                ? "glow-checkbox"
+                                                                : ""
                                                         }
-                                                    }}
-                                                    disabled={
-                                                        !proficientInSkill || 
-                                                        (!proficientSkills.includes(skill.name.toLowerCase()) && selectedProficiencyCount == 0)
-                                                    }
-                                                />
-                                            </li>
-                                          );
-                                      })}
+                                                        checked={proficientSkills.includes(skill.name.toLowerCase())}
+                                                        onChange={(e) => {
+                                                            const isChecked = e.target.checked;
 
-                                </ul>
-                                
+                                                            if (isChecked && selectedProficiencyCount > 0) {
+                                                                toggleProficiency(skill.name.toLowerCase());
+                                                                setSelectedProficiencyCount((count) => count - 1);
+                                                            } else if (!isChecked) {
+                                                                toggleProficiency(skill.name.toLowerCase());
+                                                                setSelectedProficiencyCount((count) => count + 1);
+                                                            }
+                                                        }}
+                                                        disabled={
+                                                            !proficientInSkill || 
+                                                            (!proficientSkills.includes(skill.name.toLowerCase()) && selectedProficiencyCount == 0)
+                                                        }
+                                                    />
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
                             </section>
-                             <div className="otherprofs box textblock">
+                            <div className="otherprofs box textblock">
                                 <label htmlFor="otherprofs">Other Proficiencies and Languages</label>
                                 <textarea
                                     id="otherprofs"
@@ -440,8 +393,6 @@ function AddCharacter() {
                                 ></textarea>
                             </div>
                         </section>
-
-                        {/* Combat Section */}
                         <section className="sub-main">
                             <section className="combat">
                                 <div className="hitdice">
@@ -452,7 +403,6 @@ function AddCharacter() {
                                             id="totalhd"
                                             name="totalhd"
                                             placeholder="2d10"
-                                        //defaultValue={character.totalhd}
                                         />
                                     </div>
                                     <div className="remaining">
@@ -461,11 +411,9 @@ function AddCharacter() {
                                             type="text"
                                             id="remaininghd"
                                             name="remaininghd"
-                                        //defaultValue={character.remaininghd}
                                         />
                                     </div>
                                 </div>
-
                                 <div className="deathsaves">
                                     <div className="label">
                                         <label>Death Saves</label>
@@ -479,7 +427,6 @@ function AddCharacter() {
                                                         key={i}
                                                         type="checkbox"
                                                         name={`deathsuccess${i}`}
-                                                    //defaultChecked={character[`deathsuccess${i}`]}
                                                     />
                                                 ))}
                                             </div>
@@ -492,7 +439,6 @@ function AddCharacter() {
                                                         key={i}
                                                         type="checkbox"
                                                         name={`deathfail${i}`}
-                                                    //defaultChecked={character[`deathfail${i}`]}
                                                     />
                                                 ))}
                                             </div>
