@@ -1,7 +1,8 @@
 // src/pages/AddCharacter.tsx
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import { useCharacterLogic } from '../hooks/useCharacterLogic';
+import { AttributeKey } from '../types/AttributeKey';
 
 function AddCharacter() {
     const {
@@ -22,20 +23,18 @@ function AddCharacter() {
         toggleProficiency, 
     } = useCharacterLogic();
 
-    const abilityScoreMapping: Record<string, string> = {
-        STR: "Strength",
-        DEX: "Dexterity",
-        CON: "Constitution",
-        WIS: "Wisdom",
-        INT: "Intelligence",
-        CHA: "Charisma",
+    const abilityScoreMapping: Record<AttributeKey, string> = {
+        str: "Strength",
+        dex: "Dexterity",
+        con: "Constitution",
+        wis: "Wisdom",
+        int: "Intelligence",
+        cha: "Charisma",
     };
 
     const [selectedProficiencyCount, setSelectedProficiencyCount] = useState(2);
     const classLookup = Object.fromEntries(classes.map(cls => [cls.id, cls]));
-    const selectedClassName = classLookup[selectedClass]?.name || "Unknown Class";
-    const classSkillsLookup = Object.fromEntries(classSkills.map(cls => [cls.id, cls]));
-    const selectedClassChoose = classSkillsLookup[selectedClass]?.choose || 0;
+    const selectedClassName = selectedClass !== null ? classLookup[selectedClass]?.name || "Unknown Class" : "Unknown Class";
 
     return (
         <Layout characters={[]} setCharacters={() => { }}>
@@ -150,23 +149,24 @@ function AddCharacter() {
                                     </div>
                                 </li>
                                 {Object.keys(abilityScores).map((attr) => {
-                                    const { baseScore, bonus, modifier } = abilityScores[attr as keyof typeof abilityScores];
+                                    const abilityKey = attr as AttributeKey;
+                                    const { baseScore, bonus, modifier } = abilityScores[abilityKey];
                                     const totalScore = baseScore + bonus;
 
                                     return (
-                                        <li key={attr} className="ability-item">
+                                        <li key={abilityKey} className="ability-item">
                                             <div className="score">
-                                                <label htmlFor={`${attr}score`}>{attr.toUpperCase()}</label>
+                                                <label htmlFor={`${abilityKey}score`}>{abilityKey.toUpperCase()}</label>
                                                 <input
-                                                    id={`${attr}score`}
-                                                    name={`${attr}score`}
+                                                    id={`${abilityKey}score`}
+                                                    name={`${abilityKey}score`}
                                                     value={totalScore}
                                                     readOnly
                                                 />
                                             </div>
                                             <div className="modifier">
                                                 <input
-                                                    name={`${attr}mod`}
+                                                    name={`${abilityKey}mod`}
                                                     value={modifier >= 0 ? `+${modifier}` : modifier}
                                                     readOnly
                                                 />
@@ -175,14 +175,14 @@ function AddCharacter() {
                                                     <button
                                                         type="button"
                                                         className="modifier-btn decrement"
-                                                        onClick={() => DecreaseAbilityScore(attr)}
+                                                        onClick={() => DecreaseAbilityScore(abilityKey)}
                                                     >
                                                         -
                                                     </button>
                                                     <button
                                                         type="button"
                                                         className="modifier-btn increment"
-                                                        onClick={() => IncreaseAbilityScore(attr)}
+                                                        onClick={() => IncreaseAbilityScore(abilityKey)}
                                                     >
                                                         +
                                                     </button>
@@ -225,7 +225,7 @@ function AddCharacter() {
                                             type="text"
                                             id="maxhp"
                                             name="maxhp"
-                                            value={classes.find((cls) => cls.id === selectedClass)?.hitDie + abilityScores.con.modifier|| 0}
+                                            value={selectedClass !== null ? (classes.find((cls) => cls.id === selectedClass)?.hitDie || 0) + abilityScores.con.modifier : 0}
                                             readOnly
                                             />
                                     </div>
@@ -244,14 +244,14 @@ function AddCharacter() {
                                         <div className="label">Saving Throws</div>
                                         <ul>
                                             {["Strength", "Dexterity", "Constitution", "Wisdom", "Intelligence", "Charisma"].map((attr, index) => {
-                                                const abilityKey = attr.toLowerCase().slice(0, 3);
+                                                const abilityKey = attr.toLowerCase().slice(0, 3) as AttributeKey;
 
                                                 // Check if the attribute is part of the saving throw proficiencies for the selected class
                                                 const isProficient = classSavingThrows.some((savingThrow) => 
-                                                    abilityScoreMapping[savingThrow.abilityScoreName] === attr
+                                                    abilityScoreMapping[savingThrow.abilityScoreName.toLowerCase() as AttributeKey] === attr
                                                 );
 
-                                                const modifier = abilityScores[abilityKey]?.modifier + isProficient * PoficiencyBonus || 0;
+                                                const modifier = abilityScores[abilityKey]?.modifier + (isProficient ? PoficiencyBonus : 0) || 0;
 
                                                 return (
                                                     <li key={index}>
@@ -320,27 +320,62 @@ function AddCharacter() {
                         </div>
                             <section className="skills list-section box">
                                 <ul>
-                                    {[
-                                        { name: "Acrobatics", attr: "Dex" },
-                                        { name: "Animal Handling", attr: "Wis" },
-                                        { name: "Arcana", attr: "Int" },
-                                        { name: "Athletics", attr: "Str" },
-                                        { name: "Deception", attr: "Cha" },
-                                        { name: "History", attr: "Int" },
-                                        { name: "Insight", attr: "Wis" },
-                                        { name: "Intimidation", attr: "Cha" },
-                                        { name: "Investigation", attr: "Int" },
-                                        { name: "Medicine", attr: "Wis" },
-                                        { name: "Nature", attr: "Int" },
-                                        { name: "Perception", attr: "Wis" },
-                                        { name: "Performance", attr: "Cha" },
-                                        { name: "Persuasion", attr: "Cha" },
-                                        { name: "Religion", attr: "Int" },
-                                        { name: "Sleight of Hand", attr: "Dex" },
-                                        { name: "Stealth", attr: "Dex" },
-                                        { name: "Survival", attr: "Wis" },
-                                    ].map((skill, index) => {
-                                        const abilityKey = skill.attr.toLowerCase().slice(0, 3);
+{                                    [{
+                                        name: "Acrobatics",
+                                        attr: "Dex"
+                                    }, {
+                                        name: "Animal Handling",
+                                        attr: "Wis"
+                                    }, {
+                                        name: "Arcana",
+                                        attr: "Int"
+                                    }, {
+                                        name: "Athletics",
+                                        attr: "Str"
+                                    }, {
+                                        name: "Deception",
+                                        attr: "Cha"
+                                    }, {
+                                        name: "History",
+                                        attr: "Int"
+                                    }, {
+                                        name: "Insight",
+                                        attr: "Wis"
+                                    }, {
+                                        name: "Intimidation",
+                                        attr: "Cha"
+                                    }, {
+                                        name: "Investigation",
+                                        attr: "Int"
+                                    }, {
+                                        name: "Medicine",
+                                        attr: "Wis"
+                                    }, {
+                                        name: "Nature",
+                                        attr: "Int"
+                                    }, {
+                                        name: "Perception",
+                                        attr: "Wis"
+                                    }, {
+                                        name: "Performance",
+                                        attr: "Cha"
+                                    }, {
+                                        name: "Persuasion",
+                                        attr: "Cha"
+                                    }, {
+                                        name: "Religion",
+                                        attr: "Int"
+                                    }, {
+                                        name: "Sleight of Hand",
+                                        attr: "Dex"
+                                    }, {
+                                        name: "Stealth",
+                                        attr: "Dex"
+                                    }, {
+                                        name: "Survival",
+                                        attr: "Wis"
+                                    }].map((skill, index) => {
+                                        const abilityKey = skill.attr.toLowerCase().slice(0, 3) as AttributeKey;
                                         const modifier = abilityScores[abilityKey]?.modifier;
                                         let proficientInSkill = false;
 
@@ -393,6 +428,7 @@ function AddCharacter() {
                                             </li>
                                           );
                                       })}
+
                                 </ul>
                                 
                             </section>
@@ -408,10 +444,6 @@ function AddCharacter() {
                         {/* Combat Section */}
                         <section className="sub-main">
                             <section className="combat">
-                               
-
-
-
                                 <div className="hitdice">
                                     <div className="total">
                                         <label htmlFor="totalhd">Total</label>

@@ -10,5 +10,10 @@
   "description": "",
   "dependencies": {
     "react-router-dom": "^6.26.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.11",
+    "@types/react-dom": "^19.0.4",
+    "@types/react-helmet": "^6.1.11"
   }
 }

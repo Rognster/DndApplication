@@ -6,6 +6,8 @@ import { RaceAbilityBonus } from '../interfaces/RaceAbilityBonus';
 import { ClassSavingThrows } from '../interfaces/ClassSavingThrows';
 import { ClassSkills } from '../interfaces/ClassSkills';
 
+type AttributeKey = 'str' | 'dex' | 'con' | 'wis' | 'int' | 'cha';
+
 export function useCharacterLogic() {
     const [classes, setClasses] = useState<ClassData[]>([]);
     const [races, setRaces] = useState<RaceData[]>([]);
@@ -22,7 +24,7 @@ export function useCharacterLogic() {
     });
     const [classSavingThrows, setClassSavingThrows] = useState<ClassSavingThrows[]>([]);
     const [classSkills, setClassSkills] = useState<ClassSkills[]>([]);
-    const [PoficiencyBonus, setPoficiencyBonus] = useState(2);
+    const [PoficiencyBonus] = useState(2);
     const [proficientSkills, setProficientSkills] = useState<string[]>([]);
 
     // Helper function to fetch data
@@ -58,7 +60,7 @@ export function useCharacterLogic() {
             // Fetch Class Skills
             fetch(`https://localhost:5001/api/ClassSkill/${selectedClass}`)
                 .then((response) => response.json())
-                .then((data: ClassSkills[]) => setClassSkills(data)) // Assuming setClassSkills is the state setter
+                .then((data: ClassSkills[]) => setClassSkills(data))
                 .catch((error) => console.error("Error fetching class skills:", error));
         }
     }, [selectedClass]);
@@ -89,15 +91,13 @@ export function useCharacterLogic() {
             const isProficient = proficientSkills.includes(key); // Check if the skill is proficient
             const proficiencyBonus = isProficient ? PoficiencyBonus : 0;
 
-            scores[key] = {
+            scores[key as keyof typeof abilityScores] = {
                 ...value,
                 modifier: Math.floor((value.baseScore + value.bonus - 10) / 2) + proficiencyBonus,
             };
             return scores;
         }, {} as typeof abilityScores);
     };
-
-    
 
     // Handle class change
     const handleClassChange = (value: number) => {
@@ -144,7 +144,7 @@ export function useCharacterLogic() {
         }
     };
 
-    const DecreaseAbilityScore = (attr: string) => {
+    const DecreaseAbilityScore = (attr: AttributeKey) => {
         setAbilityScores((prev) => {
             const cost = prev[attr].baseScore > 13 ? 2 : 1; // Determine cost
             if (prev[attr].baseScore > 8) { // Ensure baseScore doesn't go below 8
@@ -166,7 +166,7 @@ export function useCharacterLogic() {
         });
     };
 
-    const IncreaseAbilityScore = (attr: string) => {
+    const IncreaseAbilityScore = (attr: AttributeKey) => {
         setAbilityScores((prev) => {
             const cost = prev[attr].baseScore >= 13 ? 2 : 1; // Determine cost
             if (unusedAbilityPoints >= cost && prev[attr].baseScore < 15) { // Ensure within limits

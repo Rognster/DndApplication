@@ -1,11 +1,11 @@
 // src/pages/Home.tsx
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
-import { Character } from '../types';
+import { CharacterType } from '../types/CharacterType';
 
 function Home() {
-    const [characters, setCharacters] = useState<Character[]>([]);
+    const [characters, setCharacters] = useState<CharacterType[]>([]);
 
     useEffect(() => {
         populateCharacterData();
@@ -28,7 +28,7 @@ function Home() {
 
     return (
         <Layout characters={characters} setCharacters={setCharacters}>
-            <div class="content-wrapper">
+            <div className="content-wrapper">
                 <h1>DnD Application</h1>
                 <p>This is going to be an application for playing DnD online.</p>
             </div>

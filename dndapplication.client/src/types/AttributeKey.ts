@@ -1,0 +1,1 @@
+export type AttributeKey = 'str' | 'dex' | 'con' | 'wis' | 'int' | 'cha';
