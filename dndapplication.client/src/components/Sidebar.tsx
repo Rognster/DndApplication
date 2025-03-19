@@ -3,11 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { CharacterType } from '../types/CharacterType';
 import '../styles/sidebar.css';
 
-export interface Character {
-    id: number;
-    name: string;
-}
-
 interface SidebarProps {
     characters: CharacterType[];
     setCharacters: React.Dispatch<React.SetStateAction<CharacterType[]>>;
