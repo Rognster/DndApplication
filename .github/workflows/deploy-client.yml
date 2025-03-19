@@ -15,11 +15,15 @@ jobs:
               uses: actions/setup-node@v2
               with:
                 node-version: '20'
+            - name: Fix node_modules permissions
+              run: |
+                mkdir -p ./dndapplication.client/node_modules
+                chown -R $USER:$USER ./dndapplication.client/node_modules
             - name: Install dependencies
-              run: sudo npm install
+              run: npm install
               working-directory: ./dndapplication.client
             - name: Build the project
-              run: sudo npm run build
+              run: npm run build
               working-directory: ./dndapplication.client
             - name: 'Login to Azure'
               uses: azure/login@v1
