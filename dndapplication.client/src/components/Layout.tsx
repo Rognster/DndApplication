@@ -2,13 +2,18 @@
 
 import React from 'react';
 import Sidebar from './Sidebar'; // Adjust the import path as necessary
-import { CharacterType } from '../types/CharacterType'; // Adjust the import path as necessary
 import { Helmet } from 'react-helmet-async';
 
+interface Character {
+  id: number;
+  name: string;
+  // add other character properties as needed
+}
+
 interface LayoutProps {
-    children: React.ReactNode;
-    characters: CharacterType[];
-    setCharacters: React.Dispatch<React.SetStateAction<CharacterType[]>>;
+  children: React.ReactNode;
+  characters: Character[];
+  setCharacters: React.Dispatch<React.SetStateAction<Character[]>>;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, characters, setCharacters }) => {
