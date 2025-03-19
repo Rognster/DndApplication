@@ -17,8 +17,8 @@ jobs:
                 node-version: '20'
             - name: Fix node_modules permissions
               run: |
-                mkdir -p ./dndapplication.client/node_modules
-                chown -R $USER:$USER ./dndapplication.client/node_modules
+                sudo mkdir -p ./dndapplication.client/node_modules
+                sudo chown -R $USER:$USER ./dndapplication.client/node_modules
             - name: Install dependencies
               run: npm install
               working-directory: ./dndapplication.client
