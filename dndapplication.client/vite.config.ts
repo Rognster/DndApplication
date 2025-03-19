@@ -17,6 +17,11 @@ const certificateName = "dndapplication.client";
 const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
+// Create certificate directory if it doesn't exist
+if (!fs.existsSync(baseFolder)) {
+    fs.mkdirSync(baseFolder, { recursive: true, mode: 0o700 });
+}
+
 if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     if (0 !== child_process.spawnSync('dotnet', [
         'dev-certs',
@@ -29,6 +34,8 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     ], { stdio: 'inherit', }).status) {
         throw new Error("Could not create certificate.");
     }
+    // Set restrictive permissions on the key file
+    fs.chmodSync(keyFilePath, 0o600);
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
