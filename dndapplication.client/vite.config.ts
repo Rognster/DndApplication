@@ -55,16 +55,16 @@ export default defineConfig({
         }
     },
     server: {
+        port: 8080,
+        https: {
+            key: fs.readFileSync(keyFilePath),
+            cert: fs.readFileSync(certFilePath),
+        },
         proxy: {
             '^/Character': {
                 target,
                 secure: false
             }
-        },
-        port: 8080,
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
         }
     }
 })
