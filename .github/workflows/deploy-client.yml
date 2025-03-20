@@ -32,9 +32,10 @@ jobs:
               working-directory: dndapplication.client
             - name: 'Login to Azure'
               uses: azure/login@v1
+              env:
+                CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
               with:
-                creds: ${{ secrets.AZURE_CREDENTIALS }}
-                auth-type: spn
+                creds: ${{ env.CREDENTIALS }}
             - name: 'Deploy to Azure Web App'   
               uses: azure/webapps-deploy@v2
               with:
