@@ -49,6 +49,7 @@ jobs:
 
             - name: Build and push Docker image
               run: |
+                cd dndapplication.client
                 docker build -t rognesrollspel.azurecr.io/dndapplication-client:${{ github.sha }} .
                 docker push rognesrollspel.azurecr.io/dndapplication-client:${{ github.sha }}
 
