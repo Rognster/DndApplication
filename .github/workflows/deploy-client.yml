@@ -38,5 +38,5 @@ jobs:
               uses: azure/webapps-deploy@v2
               with:
                 app-name: 'DndApplicationClient'
-                package: ./dndapplication.client/dist
+                package: ./dndapplication.client
                 publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
