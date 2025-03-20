@@ -15,34 +15,45 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
+
             - name: Set up Node.js
               uses: actions/setup-node@v2
               with:
                 node-version: '20'
+
             - name: Fix node_modules permissions
               run: |
                 sudo mkdir -p ./dndapplication.client/node_modules
                 sudo chown -R $USER:$USER ./dndapplication.client/node_modules
+
             - name: Install dependencies
               run: |
                 cd dndapplication.client
                 npm ci
+
             - name: Build the project
               run: npm run build
               working-directory: dndapplication.client
-            - name: Prepare deployment package
-              run: |
-                mkdir -p ./dndapplication.client/deploy
-                cp -r ./dndapplication.client/dist ./dndapplication.client/deploy
-                cp ./dndapplication.client/package.json ./dndapplication.client/deploy
-                cp ./dndapplication.client/package-lock.json ./dndapplication.client/deploy
-            - name: 'Login to Azure'
-              uses: azure/login@v1 
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v1
+
+            - name: Log in to Azure CLI
+              uses: azure/login@v1
               with:
                 creds: ${{ secrets.AZURE_CREDENTIALS }}
-            - name: 'Deploy to Azure Web App'   
+
+            - name: Log in to Azure Container Registry
+              run: |
+                echo ${{ secrets.ACR_PASSWORD }} | docker login rognesrollspel.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+            - name: Build and push Docker image
+              run: |
+                docker build -t rognesrollspel.azurecr.io/dndapplication-client:${{ github.sha }} .
+                docker push rognesrollspel.azurecr.io/dndapplication-client:${{ github.sha }}
+
+            - name: Deploy to Azure Web App
               uses: azure/webapps-deploy@v2
               with:
                 app-name: 'DndApplicationClient'
-                package: ./dndapplication.client/deploy
-                publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+                images: 'rognesrollspel.azurecr.io/dndapplication-client:${{ github.sha }}'
