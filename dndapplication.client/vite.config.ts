@@ -64,7 +64,12 @@ export default defineConfig({
             '^/Character': {
                 target,
                 secure: false
+            },
+            '^/api': {
+                target,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/api/, '')
             }
         }
     }
-})
+});
