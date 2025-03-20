@@ -33,7 +33,7 @@ jobs:
             - name: 'Login to Azure'
               uses: azure/login@v1
               with:
-                creds: '{"clientId": "AZURE_CLIENT_ID", "clientSecret": "AZURE_CLIENT_SECRET", "subscriptionId": "AZURE_SUBSCRIPTION_ID", "tenantId": "AZURE_TENANT_ID"}'
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
                 auth-type: spn
             - name: 'Deploy to Azure Web App'   
               uses: azure/webapps-deploy@v2
