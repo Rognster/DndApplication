@@ -29,12 +29,12 @@ RUN apt-get update && apt-get install -y curl procps gnupg iproute2 iputils-ping
 # Copy the published output from the build stage
 COPY --from=build /app/out ./
 
-# Expose port 5002
-EXPOSE 5002
+# Expose port 8080
+EXPOSE 8080
 
 # Set environment variables for ASP.NET Core
-ENV ASPNETCORE_URLS=http://0.0.0.0:5002
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 ENV ASPNETCORE_ENVIRONMENT=Development
 
 # Start the application
-ENTRYPOINT ["dotnet", "DndApplication.Server.dll", "--urls", "http://0.0.0.0:5002"]
+ENTRYPOINT ["dotnet", "DndApplication.Server.dll", "--urls", "http://0.0.0.0:8080"]

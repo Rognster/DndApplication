@@ -10,7 +10,7 @@ permissions:
     contents: read
 
 jobs:
-    build-and-deloy-client:
+    build-and-deploy-client:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -30,6 +30,12 @@ jobs:
             - name: Build the project
               run: npm run build
               working-directory: dndapplication.client
+            - name: Prepare deployment package
+              run: |
+                mkdir -p ./dndapplication.client/deploy
+                cp -r ./dndapplication.client/dist ./dndapplication.client/deploy
+                cp ./dndapplication.client/package.json ./dndapplication.client/deploy
+                cp ./dndapplication.client/package-lock.json ./dndapplication.client/deploy
             - name: 'Login to Azure'
               uses: azure/login@v1 
               with:
@@ -38,5 +44,5 @@ jobs:
               uses: azure/webapps-deploy@v2
               with:
                 app-name: 'DndApplicationClient'
-                package: ./dndapplication.client
+                package: ./dndapplication.client/deploy
                 publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
