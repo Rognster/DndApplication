@@ -18,13 +18,8 @@ RUN dotnet publish ./DndApplication.Server.csproj -c Release -o /app/out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Install curl, procps, gnupg, iproute2, iputils-ping, and mssql-tools
-RUN apt-get update && apt-get install -y curl procps gnupg iproute2 iputils-ping \
-    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-    && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql17 mssql-tools \
-    && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+# Add mssql-tools to path
+ENV PATH="$PATH:/opt/mssql-tools/bin"
 
 # Copy the published output from the build stage
 COPY --from=build /app/out ./
@@ -34,7 +29,8 @@ EXPOSE 8080
 
 # Set environment variables for ASP.NET Core
 ENV ASPNETCORE_URLS=http://0.0.0.0:8080
-ENV ASPNETCORE_ENVIRONMENT=Development
+# Set environment variable to ensure SQL connectivity works correctly
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
 # Start the application
 ENTRYPOINT ["dotnet", "DndApplication.Server.dll", "--urls", "http://0.0.0.0:8080"]
