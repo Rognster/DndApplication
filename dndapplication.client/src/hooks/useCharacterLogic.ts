@@ -8,6 +8,7 @@ import { ClassSkills } from '../interfaces/ClassSkills';
 import { AttributeKey } from '../types/CharacterType';  // Added import
 
 export function useCharacterLogic() {
+    const baseUrl = 'https://rpapi-czd4aub3fzcrd9ce.swedencentral-01.azurewebsites.net/api/';
     const [classes, setClasses] = useState<ClassData[]>([]);
     const [races, setRaces] = useState<RaceData[]>([]);
     const [selectedClass, setSelectedClass] = useState<number | null>(null);
@@ -43,21 +44,21 @@ export function useCharacterLogic() {
 
     // Fetch initial data (classes and races)
     useEffect(() => {
-        fetchData<ClassData[]>('https://localhost:5001/api/Class/', setClasses);
-        fetchData<RaceData[]>('https://localhost:5001/api/Race/', setRaces);
+        fetchData<ClassData[]>(`${baseUrl}Class/`, setClasses);
+        fetchData<RaceData[]>(`${baseUrl}Race/`, setRaces);
     }, []);
 
     // Fetch class saving throws when selectedClass changes
     useEffect(() => {
         if (selectedClass) {
             // Fetch Class Saving Throws
-            fetch(`https://localhost:5001/api/ClassSavingThrow/${selectedClass}`)
+            fetch(`${baseUrl}ClassSavingThrow/${selectedClass}`)
                 .then((response) => response.json())
                 .then((data: ClassSavingThrows[]) => setClassSavingThrows(data))
                 .catch((error) => console.error("Error fetching saving throws:", error));
 
             // Fetch Class Skills
-            fetch(`https://localhost:5001/api/ClassSkill/${selectedClass}`)
+            fetch(`${baseUrl}ClassSkill/${selectedClass}`)
                 .then((response) => response.json())
                 .then((data: ClassSkills[]) => setClassSkills(data))
                 .catch((error) => console.error("Error fetching class skills:", error));
@@ -117,7 +118,7 @@ export function useCharacterLogic() {
         };
 
         try {
-            const response = await fetch(`https://localhost:5001/api/RaceAbilityBonus/${value}`);
+            const response = await fetch(`${baseUrl}RaceAbilityBonus/${value}`);
             if (response.ok) {
                 const bonuses: RaceAbilityBonus[] = await response.json();
 
