@@ -1,6 +1,6 @@
 using DndApplication.Server.Data;
 using Microsoft.EntityFrameworkCore;
-
+//comment to trigger deploy
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
