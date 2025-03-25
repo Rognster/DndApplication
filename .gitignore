@@ -52,6 +52,12 @@ build/
 DndApplication.Server/obj/
 DndApplication.Server/bin/
 dndapplication.client/obj/
+dndapplication.client/bin/
+DndApplication/obj/
+DndApplication/bin/
+
+# Visual Studio files
+.vs/
 
 # Environment files (if using any secret configurations)
 .env
