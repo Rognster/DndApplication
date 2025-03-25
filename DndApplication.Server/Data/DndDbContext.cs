@@ -141,8 +141,15 @@ public partial class DndDbContext : DbContext
     public virtual DbSet<WeaponPropertyDescription> WeaponPropertyDescriptions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=PC-5CG4192ZQR;Database=DnDdb;Trusted_Connection=True;TrustServerCertificate=True;");
+    {
+        // Remove the hardcoded connection string warning
+        if (!optionsBuilder.IsConfigured)
+        {
+            // This fallback is only used when no connection string is provided through DI
+            // It should never be used in production
+            optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

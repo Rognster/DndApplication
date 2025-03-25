@@ -1,52 +1,41 @@
 using DndApplication.Server.Data;
 using Microsoft.EntityFrameworkCore;
-//comment to trigger deploy
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Register DbContext
+// Add DbContext using the connection string from configuration
 builder.Services.AddDbContext<DndDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-// Add Swagger for API documentation (optional but recommended)
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure CORS
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder
-                .AllowAnyOrigin() // Allows all origins
-                .AllowAnyMethod() // Allows all HTTP methods (GET, POST, etc.)
-                .AllowAnyHeader(); // Allows all headers
-        });
+    options.AddPolicy("AllowAll", 
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 });
-
-//builder.WebHost.UseUrls("http://localhost:5002");
-
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+//}
 
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
+app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
