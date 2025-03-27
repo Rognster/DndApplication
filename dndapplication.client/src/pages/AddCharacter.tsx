@@ -1,5 +1,5 @@
 // src/pages/AddCharacter.tsx
-import { useState } from 'react';
+import { useState, useRef, ChangeEvent } from 'react';
 import Layout from '../components/Layout';
 import { useCharacterLogic } from '../hooks/useCharacterLogic';
 import { AttributeKey } from '../types/CharacterType';
@@ -24,6 +24,24 @@ function AddCharacter() {
         toggleProficiency, 
     } = useCharacterLogic();
 
+    const [profileImage, setProfileImage] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setProfileImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
+    };
+
     const abilityScoreMapping: Record<AttributeKey, string> = {
         str: "Strength",
         dex: "Dexterity",
@@ -43,10 +61,35 @@ function AddCharacter() {
                 <form className="charsheet">
                     <h1>Add Character</h1>
                     <header className="header">
-                        <section className="charname">
-                            <label htmlFor="charname">Character Name</label>
-                            <input id="charname" name="charname" placeholder="Thoradin Fireforge" />
-                        </section>
+                        <div className="profile-section">
+                            <div 
+                                className="profile-image-container" 
+                                onClick={triggerFileInput}
+                            >
+                                {profileImage ? (
+                                    <img 
+                                        src={profileImage} 
+                                        alt="Character profile" 
+                                        className="profile-image" 
+                                    />
+                                ) : (
+                                    <div className="profile-placeholder">
+                                        <span>Click to add image</span>
+                                    </div>
+                                )}
+                                <input 
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleImageUpload}
+                                    accept="image/*"
+                                    className="file-input"
+                                />
+                            </div>
+                            <div className="char-name-container">
+                                <label htmlFor="charname">Character Name</label>
+                                <input id="charname" name="charname" placeholder="Thoradin Fireforge" />
+                            </div>
+                        </div>
                         <section className="misc">
                             <ul>
                                 <li>
