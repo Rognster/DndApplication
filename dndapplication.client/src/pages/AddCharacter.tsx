@@ -5,6 +5,19 @@ import { useCharacterLogic } from '../hooks/useCharacterLogic';
 import { AttributeKey } from '../types/CharacterType';
 import '../styles/character.css';
 
+// Equipment types
+type EquipmentItem = {
+    id: string;
+    name: string;
+    quantity: number;
+};
+
+type EquipmentCategory = {
+    name: string;
+    items: EquipmentItem[];
+    isOpen: boolean;
+};
+
 function AddCharacter() {
     const {
         classes,
@@ -23,6 +36,125 @@ function AddCharacter() {
         proficientSkills,
         toggleProficiency, 
     } = useCharacterLogic();
+
+    // New state for character level
+    const [characterLevel, setCharacterLevel] = useState<number>(1);
+    
+    // Add state for selected subrace
+    const [selectedSubrace, setSelectedSubrace] = useState<number | null>(null);
+
+    // Dummy subrace data
+    const subraces = [
+        { id: 1, name: "Hill Dwarf", parentRaceId: 1 },
+        { id: 2, name: "Mountain Dwarf", parentRaceId: 1 },
+        { id: 3, name: "High Elf", parentRaceId: 2 },
+        { id: 4, name: "Wood Elf", parentRaceId: 2 },
+        { id: 5, name: "Dark Elf (Drow)", parentRaceId: 2 },
+        { id: 6, name: "Lightfoot Halfling", parentRaceId: 3 },
+        { id: 7, name: "Stout Halfling", parentRaceId: 3 },
+        { id: 8, name: "Rock Gnome", parentRaceId: 5 },
+        { id: 9, name: "Forest Gnome", parentRaceId: 5 },
+        { id: 10, name: "Brass Dragonborn", parentRaceId: 7 },
+        { id: 11, name: "Gold Dragonborn", parentRaceId: 7 },
+    ];
+
+    // Function to handle subrace change
+    const handleSubraceChange = (subraceId: number) => {
+        setSelectedSubrace(subraceId);
+    };
+
+    // Get filtered subraces based on selected race
+    const filteredSubraces = subraces.filter(
+        (subrace) => selectedRace !== null && subrace.parentRaceId === selectedRace
+    );
+
+    // Equipment state
+    const [equipmentCategories, setEquipmentCategories] = useState<EquipmentCategory[]>([
+        { name: 'Weapons', items: [], isOpen: true },
+        { name: 'Armor', items: [], isOpen: true },
+        { name: 'Consumables', items: [], isOpen: true },
+        { name: 'Other', items: [], isOpen: true },
+    ]);
+    
+    const [newItemName, setNewItemName] = useState<string>('');
+    const [newItemQuantity, setNewItemQuantity] = useState<number>(1);
+    const [selectedCategory, setSelectedCategory] = useState<string>('Weapons');
+    
+    // Currency state
+    const [currency, setCurrency] = useState({
+        cp: 0, // Copper
+        sp: 0, // Silver
+        ep: 0, // Electrum
+        gp: 0, // Gold
+        pp: 0, // Platinum
+    });
+
+    // Common equipment options
+    const equipmentOptions = {
+        Weapons: ['Longsword', 'Short Bow', 'Dagger', 'Greatsword', 'Crossbow', 'Staff', 'Warhammer', 'Rapier'],
+        Armor: ['Leather Armor', 'Chain Mail', 'Plate Armor', 'Shield', 'Breastplate', 'Studded Leather'],
+        Consumables: ['Potion of Healing', 'Rations (1 day)', 'Antitoxin', 'Holy Water', 'Acid Vial', 'Alchemist Fire'],
+        Other: ['Backpack', 'Bedroll', 'Rope', 'Torch', 'Waterskin', 'Spellbook', 'Component Pouch', 'Thieves\' Tools'],
+    };
+
+    // Equipment functions
+    const toggleCategory = (categoryName: string) => {
+        setEquipmentCategories(categories => 
+            categories.map(category => 
+                category.name === categoryName 
+                    ? { ...category, isOpen: !category.isOpen } 
+                    : category
+            )
+        );
+    };
+
+    const addItem = (categoryName: string) => {
+        if (!newItemName) return;
+        
+        setEquipmentCategories(categories => 
+            categories.map(category => {
+                if (category.name === categoryName) {
+                    return {
+                        ...category,
+                        items: [
+                            ...category.items,
+                            {
+                                id: Date.now().toString(),
+                                name: newItemName,
+                                quantity: newItemQuantity,
+                            }
+                        ]
+                    };
+                }
+                return category;
+            })
+        );
+        
+        setNewItemName('');
+        setNewItemQuantity(1);
+    };
+
+    const removeItem = (categoryName: string, itemId: string) => {
+        setEquipmentCategories(categories => 
+            categories.map(category => {
+                if (category.name === categoryName) {
+                    return {
+                        ...category,
+                        items: category.items.filter(item => item.id !== itemId)
+                    };
+                }
+                return category;
+            })
+        );
+    };
+
+    const handleCurrencyChange = (currency: string, value: string) => {
+        const numValue = value === '' ? 0 : parseInt(value);
+        setCurrency(prev => ({
+            ...prev,
+            [currency]: isNaN(numValue) ? 0 : numValue
+        }));
+    };
 
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +186,14 @@ function AddCharacter() {
     const [selectedProficiencyCount, setSelectedProficiencyCount] = useState(2);
     const classLookup = Object.fromEntries(classes.map(cls => [cls.id, cls]));
     const selectedClassName = selectedClass !== null ? classLookup[selectedClass]?.name || "Unknown Class" : "Unknown Class";
+
+    // Function to handle level change
+    const handleLevelChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        setCharacterLevel(parseInt(e.target.value));
+    };
+    
+    // Generate levels 1-20 for selection
+    const levels = Array.from({ length: 20 }, (_, i) => i + 1);
 
     return (
         <Layout characters={[]} setCharacters={() => { }}>
@@ -93,41 +233,83 @@ function AddCharacter() {
                         <section className="misc">
                             <ul>
                                 <li>
-                                    <div className="form-group">
-                                        <label htmlFor="classlevel">Class & Level</label>
-                                        <select
-                                            id="classlevel"
-                                            value={selectedClass || ''}
-                                            onChange={(e) => handleClassChange(Number(e.target.value))}
-                                        >
-                                            <option value="" disabled>
-                                                -- Choose a Class --
-                                            </option>
-                                            {classes.map((classData) => (
-                                                <option key={classData.id} value={classData.id}>
-                                                    {classData.name}
+                                    <div className="class-level-container">
+                                        <div className="form-group">
+                                            <label htmlFor="class">Class</label>
+                                            <select
+                                                id="class"
+                                                value={selectedClass || ''}
+                                                onChange={(e) => handleClassChange(Number(e.target.value))}
+                                            >
+                                                <option value="" disabled>
+                                                    -- Choose a Class --
                                                 </option>
-                                            ))}
-                                        </select>
+                                                {classes.map((classData) => (
+                                                    <option key={classData.id} value={classData.id}>
+                                                        {classData.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="level">Level</label>
+                                            <select
+                                                id="level"
+                                                value={characterLevel}
+                                                onChange={handleLevelChange}
+                                                disabled={!selectedClass}
+                                            >
+                                                {levels.map(level => (
+                                                    <option key={level} value={level}>
+                                                        {level}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
-                                    <div className="form-group">
-                                        <label htmlFor="race">Race</label>
-                                        <select
-                                            id="race"
-                                            value={selectedRace || ''}
-                                            onChange={(e) => handleRaceChange(Number(e.target.value))}
-                                        >
-                                            <option value="" disabled>
-                                                -- Choose a Race --
-                                            </option>
-                                            {races.map((raceData) => (
-                                                <option key={raceData.id} value={raceData.id}>
-                                                    {raceData.name}
+                                    <div className="Race-subRace-container">
+                                        <div className="form-group">
+                                            <label htmlFor="race">Race</label>
+                                            <select
+                                                id="race"
+                                                value={selectedRace || ''}
+                                                onChange={(e) => {
+                                                    handleRaceChange(Number(e.target.value));
+                                                    setSelectedSubrace(null); // Reset subrace when race changes
+                                                }}
+                                            >
+                                                <option value="" disabled>
+                                                    -- Choose a Race --
                                                 </option>
-                                            ))}
-                                        </select>
+                                                {races.map((raceData) => (
+                                                    <option key={raceData.id} value={raceData.id}>
+                                                        {raceData.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="subrace">Sub-Race</label>
+                                            <select
+                                                id="subrace"
+                                                value={selectedSubrace || ''}
+                                                onChange={(e) => handleSubraceChange(Number(e.target.value))}
+                                                disabled={!selectedRace || filteredSubraces.length === 0}
+                                            >
+                                                <option value="" disabled>
+                                                    {filteredSubraces.length === 0 
+                                                        ? "-- No Subraces Available --" 
+                                                        : "-- Choose a Sub Race --"}
+                                                </option>
+                                                {filteredSubraces.map((subraceData) => (
+                                                    <option key={subraceData.id} value={subraceData.id}>
+                                                        {subraceData.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -313,40 +495,49 @@ function AddCharacter() {
                                             })}
                                         </ul>
                                     </div>
-                                    <div className="saves list-section box">
-                                        <div className="label-container">
-                                            <label htmlFor="passiveperception">Passive Wisdom (Perception)</label>
+                                    <div className="stat-row">
+                                        <div className="saves list-section box">
+                                            <div className="modifier">
+                                                <label htmlFor="passiveperception">Passive Wisdom</label>
+                                                <input
+                                                    id="passiveperception"
+                                                    name="passiveperception"
+                                                    value={abilityScores.wis.modifier}
+                                                    readOnly
+                                                />
+                                            </div>
                                         </div>
-                                        <input
-                                            id="passiveperception"
-                                            name="passiveperception"
-                                            value={abilityScores.wis.modifier}
-                                            readOnly
-                                        />
+                                        <div className="saves list-section box">
+                                            <div className="modifier">
+                                                <label htmlFor="ac">Armor Class</label>
+                                                <input
+                                                    type="text"
+                                                    id="ac"
+                                                    name="ac"
+                                                    value={abilityScores.dex.modifier}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="saves list-section box">
+                                            <div className="modifier">
+                                                <label htmlFor="initiative">Initiative</label>
+                                                <input
+                                                    type="text"
+                                                    id="initiative"
+                                                    name="initiative"
+                                                    value={abilityScores.dex.modifier}
+                                                    readOnly
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="saves list-section box">
-                                        <div className="modifier">
-                                            <label htmlFor="ac">Armor Class</label>
-                                            <input
-                                                type="text"
-                                                id="ac"
-                                                name="ac"
-                                                value={abilityScores.dex.modifier}
-                                                readOnly
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="saves list-section box">
-                                        <div className="modifier">
-                                            <label htmlFor="initiative">Initiative</label>
-                                            <input
-                                                type="text"
-                                                id="initiative"
-                                                name="initiative"
-                                                value={abilityScores.dex.modifier}
-                                                readOnly
-                                            />
-                                        </div>
+                                    <div className="otherprofs box textblock">
+                                        <label htmlFor="otherprofs">Other Proficiencies and Languages</label>
+                                        <textarea
+                                            id="otherprofs"
+                                            name="otherprofs"
+                                        ></textarea>
                                     </div>
                                 </div>
                                 <div className="skills list-section box">
@@ -428,13 +619,159 @@ function AddCharacter() {
                                     </ul>
                                 </div>
                             </section>
-                            <div className="otherprofs box textblock">
-                                <label htmlFor="otherprofs">Other Proficiencies and Languages</label>
-                                <textarea
-                                    id="otherprofs"
-                                    name="otherprofs"
-                                ></textarea>
-                            </div>
+                            <section className="character-features-section">
+                                <div className="equipment-container feature-box">
+                                    <div className="section-title">Equipment</div>
+                                    <div className="equipment-categories">
+                                        {equipmentCategories.map((category) => (
+                                            <div key={category.name} className="equipment-category">
+                                                <div 
+                                                    className="category-header" 
+                                                    onClick={() => toggleCategory(category.name)}
+                                                >
+                                                    <h3>{category.name}</h3>
+                                                    <button 
+                                                        type="button" 
+                                                        className="collapse-button"
+                                                    >
+                                                        {category.isOpen ? '▼' : '►'}
+                                                    </button>
+                                                </div>
+                                                {category.isOpen && (
+                                                    <div className="category-content">
+                                                        <ul className="item-list">
+                                                            {category.items.map((item) => (
+                                                                <li key={item.id}>
+                                                                    <span>
+                                                                        {item.name}
+                                                                        <span className="item-quantity">x{item.quantity}</span>
+                                                                    </span>
+                                                                    <div className="item-actions">
+                                                                        <button 
+                                                                            type="button" 
+                                                                            className="item-delete" 
+                                                                            onClick={() => removeItem(category.name, item.id)}
+                                                                        >
+                                                                            ✕
+                                                                        </button>
+                                                                    </div>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                        <div className="add-item-form">
+                                                            <select 
+                                                                value={newItemName}
+                                                                onChange={(e) => setNewItemName(e.target.value)}
+                                                            >
+                                                                <option value="">Select item...</option>
+                                                                {equipmentOptions[category.name as keyof typeof equipmentOptions].map((item) => (
+                                                                    <option key={item} value={item}>
+                                                                        {item}
+                                                                    </option>
+                                                                ))}
+                                                                <option value="custom">Custom...</option>
+                                                            </select>
+                                                            {newItemName === 'custom' && (
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Name"
+                                                                    value=""
+                                                                    onChange={(e) => setNewItemName(e.target.value)}
+                                                                />
+                                                            )}
+                                                            <input
+                                                                type="number"
+                                                                min="1"
+                                                                value={newItemQuantity}
+                                                                onChange={(e) => setNewItemQuantity(parseInt(e.target.value) || 1)}
+                                                            />
+                                                            <button 
+                                                                type="button"
+                                                                onClick={() => addItem(category.name)}
+                                                            >
+                                                                Add
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="equipment-category">
+                                            <div className="category-header">
+                                                <h3>Money</h3>
+                                            </div>
+                                            <div className="category-content">
+                                                <div className="money-section">
+                                                    <div className="currency-input">
+                                                        <label>CP</label>
+                                                        <input
+                                                            type="number"
+                                                            value={currency.cp}
+                                                            onChange={(e) => handleCurrencyChange('cp', e.target.value)}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="currency-input">
+                                                        <label>SP</label>
+                                                        <input
+                                                            type="number"
+                                                            value={currency.sp}
+                                                            onChange={(e) => handleCurrencyChange('sp', e.target.value)}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="currency-input">
+                                                        <label>EP</label>
+                                                        <input
+                                                            type="number"
+                                                            value={currency.ep}
+                                                            onChange={(e) => handleCurrencyChange('ep', e.target.value)}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="currency-input">
+                                                        <label>GP</label>
+                                                        <input
+                                                            type="number"
+                                                            value={currency.gp}
+                                                            onChange={(e) => handleCurrencyChange('gp', e.target.value)}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                    <div className="currency-input">
+                                                        <label>PP</label>
+                                                        <input
+                                                            type="number"
+                                                            value={currency.pp}
+                                                            onChange={(e) => handleCurrencyChange('pp', e.target.value)}
+                                                            min="0"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="spells-container feature-box">
+                                    <div className="section-title">Spells</div>
+                                    <textarea
+                                        id="spells"
+                                        name="spells"
+                                        placeholder="Cantrips, prepared spells, spell slots..."
+                                    ></textarea>
+                                </div>
+                                
+                                <div className="abilities-container feature-box">
+                                    <div className="section-title">Abilities & Features</div>
+                                    <textarea
+                                        id="abilities"
+                                        name="abilities"
+                                        placeholder="Class features, racial traits, feats..."
+                                    ></textarea>
+                                </div>
+                            </section>
                         </section>
                         <section className="sub-main">
                             <section className="combat">
