@@ -421,3 +421,54 @@ input[type="checkbox"].glow-checkbox:hover {
     box-shadow: 0 0 15px 5px var(--glow-color);
     transform: scale(1.1);
 }
+
+/* Layout for attributes section */
+.attributes-section {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.attr-applications {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 35%; /* Adjusted to give more room for skills */
+}
+
+/* Make saving throws section take up full width within attr-applications */
+.attr-applications .saves.list-section.box {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Make other stat boxes appear in pairs */
+.attr-applications .saves.list-section.box:not(:first-child) {
+    width: calc(50% - 5px);
+    margin: 0;
+}
+
+/* Adjust skills section to fit properly next to attr-applications */
+.skills.list-section.box {
+    width: 65%;
+    max-height: 100%;
+}
+
+.skills.list-section ul {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .attributes-section {
+        flex-direction: column;
+    }
+    
+    .attr-applications,
+    .skills.list-section.box {
+        width: 100%;
+    }
+}
