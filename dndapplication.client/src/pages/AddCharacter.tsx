@@ -395,56 +395,7 @@ function AddCharacter() {
                         </section>
                         <section className="sub-main">
                             <section className="combat">
-                                <div className="hitdice">
-                                    <div className="total">
-                                        <label htmlFor="totalhd">Total</label>
-                                        <input
-                                            type="text"
-                                            id="totalhd"
-                                            name="totalhd"
-                                            placeholder="2d10"
-                                        />
-                                    </div>
-                                    <div className="remaining">
-                                        <label htmlFor="remaininghd">Hit Dice</label>
-                                        <input
-                                            type="text"
-                                            id="remaininghd"
-                                            name="remaininghd"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="deathsaves">
-                                    <div className="label">
-                                        <label>Death Saves</label>
-                                    </div>
-                                    <div className="marks">
-                                        <div className="deathsuccesses">
-                                            <label>Successes</label>
-                                            <div className="bubbles">
-                                                {[1, 2, 3].map((i) => (
-                                                    <input
-                                                        key={i}
-                                                        type="checkbox"
-                                                        name={`deathsuccess${i}`}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div className="deathfails">
-                                            <label>Failures</label>
-                                            <div className="bubbles">
-                                                {[1, 2, 3].map((i) => (
-                                                    <input
-                                                        key={i}
-                                                        type="checkbox"
-                                                        name={`deathfail${i}`}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {/* Death Saves and Hit Dice sections removed */}
                             </section>
                         </section>
                     </main>
