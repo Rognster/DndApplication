@@ -1147,3 +1147,145 @@ input[type="checkbox"].glow-checkbox:hover {
     font-size: 11px;
     font-style: italic;
 }
+
+/* Spell Management Styling */
+.spell-filters {
+    margin-bottom: 15px;
+}
+
+.spell-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 10px;
+}
+
+.spell-level-filter,
+.spell-school-filter {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.spell-browser {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.spell-list, .character-spellbook {
+    flex: 1;
+}
+
+.spell-list h4, .character-spellbook h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.available-spells, .prepared-spells {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+.spell-item, .character-spell-item {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.spell-item:hover {
+    background-color: #f5f5f5;
+}
+
+.spell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+}
+
+.spell-name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.spell-level-school {
+    font-size: 12px;
+    color: #777;
+}
+
+.spell-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #555;
+}
+
+.concentration {
+    color: #8c1c00;
+    font-weight: 500;
+}
+
+.character-spell-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+}
+
+.spell-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.spell-info input[type="checkbox"] {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+}
+
+.prepared {
+    font-weight: bold;
+    color: #2c6e3c;
+}
+
+.loading-spinner, .no-spells, .empty-spellbook {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .spell-browser {
+        height: auto;
+        max-height: 500px;
+    }
+}

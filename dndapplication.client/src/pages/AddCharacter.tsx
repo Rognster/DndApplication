@@ -1,8 +1,9 @@
 // src/pages/AddCharacter.tsx
-import { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { useCharacterLogic } from '../hooks/useCharacterLogic';
 import { AttributeKey } from '../types/CharacterType';
+import { SpellData, CharacterSpell } from '../interfaces/SpellData';
 import '../styles/character.css';
 
 type EquipmentItem = {
@@ -40,6 +41,8 @@ function AddCharacter() {
         currentLevelData,
         currentLevelFeatures,
         cumulativeFeatures,
+        spells, // Get spells from useCharacterLogic
+        isLoadingSpells // Get loading state from useCharacterLogic
     } = useCharacterLogic();
 
     const [selectedSubrace, setSelectedSubrace] = useState<number | null>(null);
@@ -196,6 +199,66 @@ function AddCharacter() {
         }));
     };
 
+    // Spell Management - Modified to use spells from useCharacterLogic
+    const [filteredSpells, setFilteredSpells] = useState<SpellData[]>([]);
+    const [spellSearchTerm, setSpellSearchTerm] = useState('');
+    const [characterSpells, setCharacterSpells] = useState<CharacterSpell[]>([]);
+    const [spellLevelFilter, setSpellLevelFilter] = useState<number | 'all'>('all');
+    const [spellSchoolFilter, setSpellSchoolFilter] = useState<string>('all');
+
+    // Filter spells based on search term, level, and school
+    useEffect(() => {
+        let result = spells;
+        
+        // Filter by search term
+        if (spellSearchTerm) {
+            result = result.filter(spell => 
+                spell.name.toLowerCase().includes(spellSearchTerm.toLowerCase()) ||
+                spell.description.toLowerCase().includes(spellSearchTerm.toLowerCase())
+            );
+        }
+        
+        // Filter by level
+        if (spellLevelFilter !== 'all') {
+            result = result.filter(spell => spell.level === spellLevelFilter);
+        }
+        
+        // Filter by school
+        if (spellSchoolFilter !== 'all') {
+            result = result.filter(spell => spell.school.toLowerCase() === spellSchoolFilter.toLowerCase());
+        }
+        
+        setFilteredSpells(result);
+    }, [spellSearchTerm, spellLevelFilter, spellSchoolFilter, spells]);
+
+    // Add spell to character's spellbook
+    const addSpellToCharacter = (spell: SpellData) => {
+        if (!characterSpells.some(s => s.spellData.id === spell.id)) {
+            setCharacterSpells([...characterSpells, {
+                id: Date.now().toString(),
+                spellData: spell,
+                isPrepared: false
+            }]);
+        }
+    };
+
+    // Remove spell from character's spellbook
+    const removeSpellFromCharacter = (spellId: string) => {
+        setCharacterSpells(characterSpells.filter(spell => spell.id !== spellId));
+    };
+
+    // Toggle prepared status for a spell
+    const togglePreparedStatus = (spellId: string) => {
+        setCharacterSpells(characterSpells.map(spell => 
+            spell.id === spellId 
+                ? { ...spell, isPrepared: !spell.isPrepared } 
+                : spell
+        ));
+    };
+
+    // Get unique spell schools for the filter dropdown
+    const uniqueSchools = [...new Set(spells.map(spell => spell.school))];
+
     return (
         <Layout characters={[]} setCharacters={() => { }}>
             <div>
@@ -259,13 +322,21 @@ function AddCharacter() {
                                                 value={characterLevel}
                                                 onChange={handleLevelChange}
                                                 disabled={!selectedClass}
+                                                className={!selectedClass ? 'disabled-select' : ''}
                                             >
-                                                {levels.map(level => (
-                                                    <option key={level} value={level}>
-                                                        {level}
-                                                    </option>
-                                                ))}
+                                                {selectedClass ? (
+                                                    levels.map(level => (
+                                                        <option key={level} value={level}>
+                                                            {level}
+                                                        </option>
+                                                    ))
+                                                ) : (
+                                                    <option value={1}>1</option>
+                                                )}
                                             </select>
+                                            {!selectedClass && (
+                                                <div className="select-hint">Choose a class first</div>
+                                            )}
                                         </div>
                                     </div>
                                 </li>
@@ -757,11 +828,114 @@ function AddCharacter() {
                                 
                                 <div className="spells-container feature-box">
                                     <div className="section-title">Spells</div>
-                                    <textarea
-                                        id="spells"
-                                        name="spells"
-                                        placeholder="Cantrips, prepared spells, spell slots..."
-                                    ></textarea>
+                                    
+                                    {/* Spell filters and search */}
+                                    <div className="spell-filters">
+                                        <input
+                                            type="text"
+                                            placeholder="Search spells..."
+                                            value={spellSearchTerm}
+                                            onChange={(e) => setSpellSearchTerm(e.target.value)}
+                                            className="spell-search"
+                                        />
+                                        
+                                        <div className="filter-row">
+                                            <select 
+                                                value={spellLevelFilter === 'all' ? 'all' : spellLevelFilter.toString()} 
+                                                onChange={(e) => setSpellLevelFilter(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+                                                className="spell-level-filter"
+                                            >
+                                                <option value="all">All Levels</option>
+                                                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(level => (
+                                                    <option key={level} value={level}>
+                                                        {level === 0 ? 'Cantrip' : `Level ${level}`}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            
+                                            <select 
+                                                value={spellSchoolFilter} 
+                                                onChange={(e) => setSpellSchoolFilter(e.target.value)}
+                                                className="spell-school-filter"
+                                            >
+                                                <option value="all">All Schools</option>
+                                                {uniqueSchools.map(school => (
+                                                    <option key={school} value={school}>
+                                                        {school}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Spell browser */}
+                                    <div className="spell-browser">
+                                        <div className="spell-list">
+                                            <h4>Available Spells</h4>
+                                            {isLoadingSpells ? (
+                                                <div className="loading-spinner">Loading spells...</div>
+                                            ) : filteredSpells.length > 0 ? (
+                                                <ul className="available-spells">
+                                                    {filteredSpells.map(spell => (
+                                                        <li 
+                                                            key={spell.id} 
+                                                            className="spell-item"
+                                                            onClick={() => addSpellToCharacter(spell)}
+                                                        >
+                                                            <div className="spell-header">
+                                                                <span className="spell-name">{spell.name}</span>
+                                                                <span className="spell-level-school">
+                                                                    {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} - {spell.school}
+                                                                </span>
+                                                            </div>
+                                                            <div className="spell-meta">
+                                                                <span>{spell.castingTime}</span>
+                                                                <span>{spell.range}</span>
+                                                                {spell.concentration && <span className="concentration">Concentration</span>}
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <div className="no-spells">No spells match your search criteria.</div>
+                                            )}
+                                        </div>
+                                        
+                                        <div className="character-spellbook">
+                                            <h4>Your Spellbook</h4>
+                                            {characterSpells.length > 0 ? (
+                                                <ul className="prepared-spells">
+                                                    {characterSpells.map(spell => (
+                                                        <li key={spell.id} className="character-spell-item">
+                                                            <div className="spell-info">
+                                                                <input 
+                                                                    type="checkbox"
+                                                                    checked={spell.isPrepared}
+                                                                    onChange={() => togglePreparedStatus(spell.id)}
+                                                                />
+                                                                <span className={`spell-name ${spell.isPrepared ? 'prepared' : ''}`}>
+                                                                    {spell.spellData.name}
+                                                                </span>
+                                                            </div>
+                                                            <div className="spell-actions">
+                                                                <button 
+                                                                    type="button" 
+                                                                    className="item-delete" 
+                                                                    onClick={() => removeSpellFromCharacter(spell.id)}
+                                                                >
+                                                                    ✕
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <div className="empty-spellbook">
+                                                    Your spellbook is empty. Click on spells from the list to add them.
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div className="abilities-container feature-box">

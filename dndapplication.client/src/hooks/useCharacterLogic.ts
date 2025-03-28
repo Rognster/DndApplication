@@ -7,6 +7,7 @@ import { ClassSavingThrows } from '../interfaces/ClassSavingThrows';
 import { ClassSkills } from '../interfaces/ClassSkills';
 import { AttributeKey } from '../types/CharacterType';
 import { ClassLevel, Feature, LevelFeature } from '../interfaces/ClassLevel';  // Added LevelFeature import
+import { SpellData } from '../interfaces/SpellData';
 
 export function useCharacterLogic() {
     const baseUrl = 'http://localhost:5002/api/'//'https://rpapi-czd4aub3fzcrd9ce.swedencentral-01.azurewebsites.net/api/';
@@ -32,6 +33,8 @@ export function useCharacterLogic() {
     const [currentLevelData, setCurrentLevelData] = useState<ClassLevel | null>(null);
     const [currentLevelFeatures, setCurrentLevelFeatures] = useState<Feature[]>([]);
     const [cumulativeFeatures, setCumulativeFeatures] = useState<Feature[]>([]);
+    const [spells, setSpells] = useState<SpellData[]>([]);
+    const [isLoadingSpells, setIsLoadingSpells] = useState(false);
 
     // Helper function to fetch data
     const fetchData = async <T,>(url: string, setState: React.Dispatch<React.SetStateAction<T>>) => {
@@ -48,10 +51,30 @@ export function useCharacterLogic() {
         }
     };
 
-    // Fetch initial data (classes and races)
+    // Fetch initial data (classes, races, and spells)
     useEffect(() => {
         fetchData<ClassData[]>(`${baseUrl}Class/`, setClasses);
         fetchData<RaceData[]>(`${baseUrl}Race/`, setRaces);
+        
+        // Fetch spells
+        const fetchSpells = async () => {
+            setIsLoadingSpells(true);
+            try {
+                const response = await fetch(`${baseUrl}Spells`);
+                if (response.ok) {
+                    const data: SpellData[] = await response.json();
+                    setSpells(data);
+                } else {
+                    console.error('Failed to fetch spells:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching spells:', error);
+            } finally {
+                setIsLoadingSpells(false);
+            }
+        };
+        
+        fetchSpells();
     }, []);
 
     // Fetch class saving throws when selectedClass changes
@@ -308,5 +331,7 @@ export function useCharacterLogic() {
         currentLevelData,
         currentLevelFeatures,
         cumulativeFeatures,
+        spells, // Export spells
+        isLoadingSpells // Export loading state
     };
 }

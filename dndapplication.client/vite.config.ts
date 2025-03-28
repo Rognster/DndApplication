@@ -67,6 +67,10 @@ export default defineConfig({
                 target,
                 secure: false
             },
+            '^/Spells': {
+                target,
+                secure: false
+            },
             '^/api': {
                 target,
                 secure: false,
