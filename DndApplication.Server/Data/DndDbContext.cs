@@ -696,7 +696,7 @@ public partial class DndDbContext : DbContext
             entity.Property(e => e.Index)
                 .HasMaxLength(255)
                 .HasColumnName("index");
-            entity.Property(e => e.Level1).HasColumnName("level");
+            entity.Property(e => e.ClassLevel).HasColumnName("level");
             entity.Property(e => e.ProfBonus).HasColumnName("prof_bonus");
             entity.Property(e => e.Url)
                 .HasMaxLength(255)

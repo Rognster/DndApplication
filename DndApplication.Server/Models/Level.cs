@@ -7,7 +7,7 @@ public partial class Level
 {
     public int Id { get; set; }
 
-    public int Level1 { get; set; }
+    public int ClassLevel { get; set; }
 
     public int AbilityScoreBonuses { get; set; }
 

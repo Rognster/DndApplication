@@ -5,7 +5,6 @@ import { useCharacterLogic } from '../hooks/useCharacterLogic';
 import { AttributeKey } from '../types/CharacterType';
 import '../styles/character.css';
 
-// Equipment types
 type EquipmentItem = {
     id: string;
     name: string;
@@ -34,16 +33,17 @@ function AddCharacter() {
         PoficiencyBonus,
         classSkills,
         proficientSkills,
-        toggleProficiency, 
+        toggleProficiency,
+        classLevels,
+        characterLevel,
+        updateCharacterLevel,
+        currentLevelData,
+        currentLevelFeatures,
+        cumulativeFeatures,
     } = useCharacterLogic();
 
-    // New state for character level
-    const [characterLevel, setCharacterLevel] = useState<number>(1);
-    
-    // Add state for selected subrace
     const [selectedSubrace, setSelectedSubrace] = useState<number | null>(null);
 
-    // Dummy subrace data
     const subraces = [
         { id: 1, name: "Hill Dwarf", parentRaceId: 1 },
         { id: 2, name: "Mountain Dwarf", parentRaceId: 1 },
@@ -58,17 +58,14 @@ function AddCharacter() {
         { id: 11, name: "Gold Dragonborn", parentRaceId: 7 },
     ];
 
-    // Function to handle subrace change
     const handleSubraceChange = (subraceId: number) => {
         setSelectedSubrace(subraceId);
     };
 
-    // Get filtered subraces based on selected race
     const filteredSubraces = subraces.filter(
         (subrace) => selectedRace !== null && subrace.parentRaceId === selectedRace
     );
 
-    // Equipment state
     const [equipmentCategories, setEquipmentCategories] = useState<EquipmentCategory[]>([
         { name: 'Weapons', items: [], isOpen: true },
         { name: 'Armor', items: [], isOpen: true },
@@ -80,16 +77,14 @@ function AddCharacter() {
     const [newItemQuantity, setNewItemQuantity] = useState<number>(1);
     const [selectedCategory, setSelectedCategory] = useState<string>('Weapons');
     
-    // Currency state
     const [currency, setCurrency] = useState({
-        cp: 0, // Copper
-        sp: 0, // Silver
-        ep: 0, // Electrum
-        gp: 0, // Gold
-        pp: 0, // Platinum
+        cp: 0,
+        sp: 0,
+        ep: 0,
+        gp: 0,
+        pp: 0,
     });
 
-    // Common equipment options
     const equipmentOptions = {
         Weapons: ['Longsword', 'Short Bow', 'Dagger', 'Greatsword', 'Crossbow', 'Staff', 'Warhammer', 'Rapier'],
         Armor: ['Leather Armor', 'Chain Mail', 'Plate Armor', 'Shield', 'Breastplate', 'Studded Leather'],
@@ -97,7 +92,6 @@ function AddCharacter() {
         Other: ['Backpack', 'Bedroll', 'Rope', 'Torch', 'Waterskin', 'Spellbook', 'Component Pouch', 'Thieves\' Tools'],
     };
 
-    // Equipment functions
     const toggleCategory = (categoryName: string) => {
         setEquipmentCategories(categories => 
             categories.map(category => 
@@ -187,13 +181,20 @@ function AddCharacter() {
     const classLookup = Object.fromEntries(classes.map(cls => [cls.id, cls]));
     const selectedClassName = selectedClass !== null ? classLookup[selectedClass]?.name || "Unknown Class" : "Unknown Class";
 
-    // Function to handle level change
     const handleLevelChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        setCharacterLevel(parseInt(e.target.value));
+        updateCharacterLevel(parseInt(e.target.value));
     };
     
-    // Generate levels 1-20 for selection
     const levels = Array.from({ length: 20 }, (_, i) => i + 1);
+
+    const [expandedFeatures, setExpandedFeatures] = useState<Record<number, boolean>>({});
+
+    const toggleFeatureExpansion = (featureId: number) => {
+        setExpandedFeatures(prev => ({
+            ...prev,
+            [featureId]: !prev[featureId]
+        }));
+    };
 
     return (
         <Layout characters={[]} setCharacters={() => { }}>
@@ -277,7 +278,7 @@ function AddCharacter() {
                                                 value={selectedRace || ''}
                                                 onChange={(e) => {
                                                     handleRaceChange(Number(e.target.value));
-                                                    setSelectedSubrace(null); // Reset subrace when race changes
+                                                    setSelectedSubrace(null);
                                                 }}
                                             >
                                                 <option value="" disabled>
@@ -765,11 +766,41 @@ function AddCharacter() {
                                 
                                 <div className="abilities-container feature-box">
                                     <div className="section-title">Abilities & Features</div>
-                                    <textarea
-                                        id="abilities"
-                                        name="abilities"
-                                        placeholder="Class features, racial traits, feats..."
-                                    ></textarea>
+                                    {selectedClass === null ? (
+                                        <div className="empty-state">Select a class to see available features.</div>
+                                    ) : cumulativeFeatures && cumulativeFeatures.length > 0 ? (
+                                        <div className="features-container">
+                                            {cumulativeFeatures.map(feature => (
+                                                <div key={feature.id} className="feature-item">
+                                                    <div 
+                                                        className="feature-header" 
+                                                        onClick={() => toggleFeatureExpansion(feature.id)}
+                                                    >
+                                                        <div className="feature-name-container">
+                                                            <span className={`expand-icon ${expandedFeatures[feature.id] ? 'rotated' : ''}`}>
+                                                                ▶
+                                                            </span>
+                                                            <h4>{feature.name}</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div className={`feature-content ${expandedFeatures[feature.id] ? 'expanded' : ''}`}>
+                                                        <p className="feature-description">
+                                                            {feature.description || "No description available."}
+                                                        </p>
+                                                        {feature.prerequisites && (
+                                                            <p className="feature-prerequisites">
+                                                                <strong>Prerequisites:</strong> {feature.prerequisites}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="empty-state">
+                                            No features available for {classes.find(c => c.id === selectedClass)?.name || ""} at level {characterLevel}.
+                                        </div>
+                                    )}
                                 </div>
                             </section>
                         </section>

@@ -3,7 +3,7 @@
     public class LevelDto
     {
         public int Id { get; set; }
-        public int Level1 { get; set; } // Represents the actual level (1, 2, 3...)
+        public int ClassLevel { get; set; } // Represents the actual level (1, 2, 3...)
         public int AbilityScoreBonuses { get; set; }
         public int ProfBonus { get; set; }
 

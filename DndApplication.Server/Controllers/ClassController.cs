@@ -21,7 +21,8 @@ public class ClassController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Class>> GetAllClasses()
     {
-        var classes = _context.Classes.ToList();
+        var classes = _context.Classes
+        .ToList();
         return Ok(classes);
     }
 
@@ -51,7 +52,7 @@ public class ClassController : ControllerBase
             .Select(l => new LevelDto
             {
                 Id = l.Id,
-                Level1 = l.Level1,
+                ClassLevel = l.ClassLevel,
                 AbilityScoreBonuses = l.AbilityScoreBonuses,
                 ProfBonus = l.ProfBonus,
                 Features = l.LevelFeatures.Select(lf => new FeatureDto

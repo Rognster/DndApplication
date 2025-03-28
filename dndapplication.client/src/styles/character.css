@@ -1069,3 +1069,81 @@ input[type="checkbox"].glow-checkbox:hover {
         margin: 0 auto;
     }
 }
+
+/* Collapsible features list styles */
+.features-list {
+    padding-right: 10px;
+}
+
+.features-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feature-item {
+    border-bottom: 1px solid #eee;
+    padding: 4px 0;
+    margin-bottom: 0;
+}
+
+.feature-header {
+    padding: 3px 0;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.feature-name-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.feature-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.expand-icon {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+    text-align: center;
+}
+
+.expand-icon.rotated {
+    transform: rotate(90deg);
+}
+
+.feature-content {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+    text-align: left;
+    margin-left: 17px;
+}
+
+.feature-content.expanded {
+    padding: 5px 0 8px 0;
+    max-height: 1000px;
+}
+
+.feature-description {
+    font-size: 12px;
+    white-space: pre-wrap;
+    margin: 0;
+    text-align: left;
+}
+
+.feature-prerequisites {
+    margin-top: 6px;
+    font-size: 11px;
+    font-style: italic;
+}

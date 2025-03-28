@@ -5,10 +5,11 @@ import { RaceData } from '../interfaces/RaceData';
 import { RaceAbilityBonus } from '../interfaces/RaceAbilityBonus';
 import { ClassSavingThrows } from '../interfaces/ClassSavingThrows';
 import { ClassSkills } from '../interfaces/ClassSkills';
-import { AttributeKey } from '../types/CharacterType';  // Added import
+import { AttributeKey } from '../types/CharacterType';
+import { ClassLevel, Feature, LevelFeature } from '../interfaces/ClassLevel';  // Added LevelFeature import
 
 export function useCharacterLogic() {
-    const baseUrl = 'https://rpapi-czd4aub3fzcrd9ce.swedencentral-01.azurewebsites.net/api/';
+    const baseUrl = 'http://localhost:5002/api/'//'https://rpapi-czd4aub3fzcrd9ce.swedencentral-01.azurewebsites.net/api/';
     const [classes, setClasses] = useState<ClassData[]>([]);
     const [races, setRaces] = useState<RaceData[]>([]);
     const [selectedClass, setSelectedClass] = useState<number | null>(null);
@@ -26,6 +27,11 @@ export function useCharacterLogic() {
     const [classSkills, setClassSkills] = useState<ClassSkills[]>([]);
     const [PoficiencyBonus] = useState(2);
     const [proficientSkills, setProficientSkills] = useState<string[]>([]);
+    const [classLevels, setClassLevels] = useState<ClassLevel[]>([]);
+    const [characterLevel, setCharacterLevel] = useState<number>(1);
+    const [currentLevelData, setCurrentLevelData] = useState<ClassLevel | null>(null);
+    const [currentLevelFeatures, setCurrentLevelFeatures] = useState<Feature[]>([]);
+    const [cumulativeFeatures, setCumulativeFeatures] = useState<Feature[]>([]);
 
     // Helper function to fetch data
     const fetchData = async <T,>(url: string, setState: React.Dispatch<React.SetStateAction<T>>) => {
@@ -62,8 +68,100 @@ export function useCharacterLogic() {
                 .then((response) => response.json())
                 .then((data: ClassSkills[]) => setClassSkills(data))
                 .catch((error) => console.error("Error fetching class skills:", error));
+
+            // Fetch Class Levels
+            fetch(`${baseUrl}Class/${selectedClass}/levels`)
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log('Class levels API response:', data);
+                    
+                    if (Array.isArray(data)) {
+                        setClassLevels(data);
+                        
+                        // Get all features for all levels up to and including current level
+                        const allFeatures: Feature[] = [];
+                        data.filter(level => level.classLevel <= characterLevel).forEach(level => {
+                            if (level.features && Array.isArray(level.features)) {
+                                allFeatures.push(...level.features);
+                            }
+                        });
+                        
+                        setCumulativeFeatures(allFeatures);
+                        
+                        // Find level data for current character level
+                        const levelData = data.find(
+                            (level: ClassLevel) => level.classLevel === characterLevel
+                        );
+                        
+                        if (levelData) {
+                            setCurrentLevelData(levelData);
+                            
+                            // Handle features directly in the levelData
+                            if (levelData.features && Array.isArray(levelData.features)) {
+                                setCurrentLevelFeatures(levelData.features);
+                            } 
+                            // Handle features in levelFeatures.feature (original structure)
+                            else if (levelData.levelFeatures && levelData.levelFeatures.length > 0) {
+                                const features: Feature[] = [];
+                                levelData.levelFeatures.forEach((levelFeature: LevelFeature) => {
+                                    if (levelFeature.feature) {
+                                        features.push(levelFeature.feature);
+                                    }
+                                });
+                                setCurrentLevelFeatures(features);
+                            } else {
+                                setCurrentLevelFeatures([]);
+                            }
+                        } else {
+                            setCurrentLevelData(null);
+                            setCurrentLevelFeatures([]);
+                        }
+                    }
+                })
+                .catch((error) => console.error("Error fetching class levels:", error));
         }
-    }, [selectedClass]);
+    }, [selectedClass, characterLevel]);
+
+    // Update current level data when character level changes
+    useEffect(() => {
+        if (classLevels.length > 0) {
+            // Get all features for all levels up to and including current level
+            const allFeatures: Feature[] = [];
+            classLevels.filter(level => level.classLevel <= characterLevel).forEach(level => {
+                if (level.features && Array.isArray(level.features)) {
+                    allFeatures.push(...level.features);
+                }
+            });
+            
+            setCumulativeFeatures(allFeatures);
+            
+            const levelData = classLevels.find(level => level.classLevel === characterLevel);
+            
+            if (levelData) {
+                setCurrentLevelData(levelData);
+                
+                // Handle features directly in the levelData
+                if (levelData.features && Array.isArray(levelData.features)) {
+                    setCurrentLevelFeatures(levelData.features);
+                } 
+                // Handle features in levelFeatures.feature (original structure)
+                else if (levelData.levelFeatures && levelData.levelFeatures.length > 0) {
+                    const features: Feature[] = [];
+                    levelData.levelFeatures.forEach((levelFeature: LevelFeature) => {
+                        if (levelFeature.feature) {
+                            features.push(levelFeature.feature);
+                        }
+                    });
+                    setCurrentLevelFeatures(features);
+                } else {
+                    setCurrentLevelFeatures([]);
+                }
+            } else {
+                setCurrentLevelData(null);
+                setCurrentLevelFeatures([]);
+            }
+        }
+    }, [characterLevel, classLevels]);
 
     useEffect(() => {
         const updatedScores = calculateSkillModifiers();
@@ -77,10 +175,8 @@ export function useCharacterLogic() {
     const toggleProficiency = (skillName: string) => {
         setProficientSkills((prev) => {
             if (prev.includes(skillName)) {
-                // Remove proficiency
                 return prev.filter((name) => name !== skillName);
             } else {
-                // Add proficiency
                 return [...prev, skillName];
             }
         });
@@ -88,7 +184,7 @@ export function useCharacterLogic() {
 
     const calculateSkillModifiers = () => {
         return Object.entries(abilityScores).reduce((scores, [key, value]) => {
-            const isProficient = proficientSkills.includes(key); // Check if the skill is proficient
+            const isProficient = proficientSkills.includes(key);
             const proficiencyBonus = isProficient ? PoficiencyBonus : 0;
 
             scores[key as keyof typeof abilityScores] = {
@@ -99,15 +195,18 @@ export function useCharacterLogic() {
         }, {} as typeof abilityScores);
     };
 
-    // Handle class change
     const handleClassChange = (value: number) => {
         setSelectedClass(value);
+        setCharacterLevel(1);
+    };
+
+    const updateCharacterLevel = (level: number) => {
+        setCharacterLevel(level);
     };
 
     const handleRaceChange = async (value: number) => {
         setSelectedRace(value);
 
-        // Reset scores to base values
         const baseScores = {
             str: { baseScore: 8, bonus: 0, modifier: -1 },
             dex: { baseScore: 8, bonus: 0, modifier: -1 },
@@ -122,7 +221,6 @@ export function useCharacterLogic() {
             if (response.ok) {
                 const bonuses: RaceAbilityBonus[] = await response.json();
 
-                // Apply race bonuses
                 const updatedScores = bonuses.reduce((scores, bonus) => {
                     const ability = bonus.abilityScoreId as keyof typeof baseScores;
                     scores[ability].bonus += bonus.bonus;
@@ -146,9 +244,9 @@ export function useCharacterLogic() {
 
     const DecreaseAbilityScore = (attr: AttributeKey) => {
         setAbilityScores((prev) => {
-            const cost = prev[attr].baseScore > 13 ? 2 : 1; // Determine cost
-            if (prev[attr].baseScore > 8) { // Ensure baseScore doesn't go below 8
-                setUnusedAbilityPoints((points) => points + cost); // Refund points
+            const cost = prev[attr].baseScore > 13 ? 2 : 1;
+            if (prev[attr].baseScore > 8) {
+                setUnusedAbilityPoints((points) => points + cost);
 
                 const updatedBaseScore = prev[attr].baseScore - 1;
                 const updatedModifier = Math.floor((updatedBaseScore + prev[attr].bonus - 10) / 2);
@@ -157,8 +255,8 @@ export function useCharacterLogic() {
                     ...prev,
                     [attr]: {
                         ...prev[attr],
-                        baseScore: updatedBaseScore, // Update baseScore
-                        modifier: updatedModifier,  // Update modifier
+                        baseScore: updatedBaseScore,
+                        modifier: updatedModifier,
                     },
                 };
             }
@@ -168,9 +266,9 @@ export function useCharacterLogic() {
 
     const IncreaseAbilityScore = (attr: AttributeKey) => {
         setAbilityScores((prev) => {
-            const cost = prev[attr].baseScore >= 13 ? 2 : 1; // Determine cost
-            if (unusedAbilityPoints >= cost && prev[attr].baseScore < 15) { // Ensure within limits
-                setUnusedAbilityPoints((points) => points - cost); // Deduct points
+            const cost = prev[attr].baseScore >= 13 ? 2 : 1;
+            if (unusedAbilityPoints >= cost && prev[attr].baseScore < 15) {
+                setUnusedAbilityPoints((points) => points - cost);
 
                 const updatedBaseScore = prev[attr].baseScore + 1;
                 const updatedModifier = Math.floor((updatedBaseScore + prev[attr].bonus - 10) / 2);
@@ -179,8 +277,8 @@ export function useCharacterLogic() {
                     ...prev,
                     [attr]: {
                         ...prev[attr],
-                        baseScore: updatedBaseScore, // Update baseScore
-                        modifier: updatedModifier,  // Update modifier
+                        baseScore: updatedBaseScore,
+                        modifier: updatedModifier,
                     },
                 };
             }
@@ -203,6 +301,12 @@ export function useCharacterLogic() {
         PoficiencyBonus,
         classSkills,
         proficientSkills,
-        toggleProficiency, 
+        toggleProficiency,
+        classLevels,
+        characterLevel,
+        updateCharacterLevel,
+        currentLevelData,
+        currentLevelFeatures,
+        cumulativeFeatures,
     };
 }
