@@ -10,7 +10,7 @@ import { ClassLevel, Feature, LevelFeature } from '../interfaces/ClassLevel';  /
 import { SpellData } from '../interfaces/SpellData';
 
 export function useCharacterLogic() {
-    const baseUrl = 'http://localhost:5002/api/'//'https://rpapi-czd4aub3fzcrd9ce.swedencentral-01.azurewebsites.net/api/';
+    const baseUrl = 'https://rpapi-czd4aub3fzcrd9ce.swedencentral-01.azurewebsites.net/api/';
     const [classes, setClasses] = useState<ClassData[]>([]);
     const [races, setRaces] = useState<RaceData[]>([]);
     const [selectedClass, setSelectedClass] = useState<number | null>(null);

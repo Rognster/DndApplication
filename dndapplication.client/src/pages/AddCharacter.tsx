@@ -35,11 +35,11 @@ function AddCharacter() {
         classSkills,
         proficientSkills,
         toggleProficiency,
-        classLevels,
+        //classLevels,
         characterLevel,
         updateCharacterLevel,
-        currentLevelData,
-        currentLevelFeatures,
+        //currentLevelData,
+        //currentLevelFeatures,
         cumulativeFeatures,
         spells, // Get spells from useCharacterLogic
         isLoadingSpells // Get loading state from useCharacterLogic
@@ -78,7 +78,7 @@ function AddCharacter() {
     
     const [newItemName, setNewItemName] = useState<string>('');
     const [newItemQuantity, setNewItemQuantity] = useState<number>(1);
-    const [selectedCategory, setSelectedCategory] = useState<string>('Weapons');
+    //const [selectedCategory, setSelectedCategory] = useState<string>('Weapons');
     
     const [currency, setCurrency] = useState({
         cp: 0,
